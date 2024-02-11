@@ -7,14 +7,9 @@ using System.Web.UI.WebControls;
 
 namespace ColecaoNumismatica
 {
-    public partial class RegisterUser : System.Web.UI.Page
+    public partial class NumiMyCollection : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void btn_registar_Click(object sender, EventArgs e)
         {
 
         }

@@ -11,17 +11,17 @@ namespace ColecaoNumismatica
 {
 
 
-    public partial class RegisterUser
+    public partial class NumiRegisterUser
     {
 
         /// <summary>
-        /// tb_username control.
+        /// tb_user control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_username;
+        protected global::System.Web.UI.WebControls.TextBox tb_user;
 
         /// <summary>
         /// tb_email control.
@@ -33,22 +33,22 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.TextBox tb_email;
 
         /// <summary>
-        /// tb_password control.
+        /// tb_pw control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_password;
+        protected global::System.Web.UI.WebControls.TextBox tb_pw;
 
         /// <summary>
-        /// tb_passwordn control.
+        /// tb_pwn control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_passwordn;
+        protected global::System.Web.UI.WebControls.TextBox tb_pwn;
 
         /// <summary>
         /// btn_registar control.
@@ -58,5 +58,14 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btn_registar;
+
+        /// <summary>
+        /// lbl_message control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbl_message;
     }
 }

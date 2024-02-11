@@ -11,125 +11,98 @@ namespace ColecaoNumismatica
 {
 
 
-    public partial class LoginUser
+    public partial class NumiInsertNewCoin
     {
 
         /// <summary>
-        /// btn_facebook control.
+        /// tb_titulo control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btn_facebook;
+        protected global::System.Web.UI.WebControls.TextBox tb_titulo;
 
         /// <summary>
-        /// btn_google control.
+        /// ddl_tipo control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btn_google;
+        protected global::System.Web.UI.WebControls.DropDownList ddl_tipo;
 
         /// <summary>
-        /// tb_utilizador control.
+        /// SQLDSTipoMN control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_utilizador;
+        protected global::System.Web.UI.WebControls.SqlDataSource SQLDSTipoMN;
 
         /// <summary>
-        /// rfv_tbutilizador control.
+        /// ddl_estado control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_tbutilizador;
+        protected global::System.Web.UI.WebControls.DropDownList ddl_estado;
 
         /// <summary>
-        /// tb_pw control.
+        /// SQLDSStateMN control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_pw;
+        protected global::System.Web.UI.WebControls.SqlDataSource SQLDSStateMN;
 
         /// <summary>
-        /// rfv_password control.
+        /// tb_descricao control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_password;
+        protected global::System.Web.UI.WebControls.TextBox tb_descricao;
 
         /// <summary>
-        /// chkBoxRemember control.
+        /// tb_valorCunho control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputCheckBox chkBoxRemember;
+        protected global::System.Web.UI.WebControls.TextBox tb_valorCunho;
 
         /// <summary>
-        /// btnLoginBE control.
+        /// tb_valorAtual control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnLoginBE;
+        protected global::System.Web.UI.WebControls.TextBox tb_valorAtual;
 
         /// <summary>
-        /// ValidationSummary2 control.
+        /// fu_imagens control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary2;
+        protected global::System.Web.UI.WebControls.FileUpload fu_imagens;
 
         /// <summary>
-        /// tb_emailpwrecover control.
+        /// btn_insert control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_emailpwrecover;
-
-        /// <summary>
-        /// rev_email control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator rev_email;
-
-        /// <summary>
-        /// rvf_email control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rvf_email;
-
-        /// <summary>
-        /// btnRecoverPasswordFE control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRecoverPasswordFE;
+        protected global::System.Web.UI.WebControls.Button btn_insert;
 
         /// <summary>
         /// lbl_message control.
@@ -139,14 +112,5 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lbl_message;
-
-        /// <summary>
-        /// ValidationSummary1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
     }
 }

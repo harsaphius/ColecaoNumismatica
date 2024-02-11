@@ -67,18 +67,99 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LoginUser.aspx" />
-    <Content Include="RegisterUser.aspx" />
+    <Content Include="Icons\delete.ico" />
+    <Content Include="Icons\save.ico" />
+    <Content Include="Images\Numi404.jpg" />
+    <Content Include="Images\NumiGeneral.jpg" />
+    <Content Include="Images\NumiDefault.png" />
+    <Content Include="NumiAtivationPage.aspx" />
+    <Content Include="Images\NumiCoin.png" />
+    <Content Include="Images\NumiCoin_C.png" />
+    <Content Include="NumiGeneralPageError.aspx" />
+    <Content Include="NumiInsertNewCoin.aspx" />
+    <Content Include="NumiLoginUser.aspx" />
+    <Content Include="NumiMainPage.aspx" />
+    <Content Include="NumiManageCoins.aspx" />
+    <Content Include="NumiManageUsers.aspx" />
+    <Content Include="NumiMoneyDetail.aspx" />
+    <Content Include="NumiMyCollection.aspx" />
+    <Content Include="NumiPageError404.aspx" />
+    <Content Include="NumiStatistics.aspx" />
+    <Content Include="NumiRegisterUser.aspx" />
     <Content Include="style.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoginUser.aspx.cs">
-      <DependentUpon>LoginUser.aspx</DependentUpon>
+    <Compile Include="NumiAtivationPage.aspx.cs">
+      <DependentUpon>NumiAtivationPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="LoginUser.aspx.designer.cs">
-      <DependentUpon>LoginUser.aspx</DependentUpon>
+    <Compile Include="NumiAtivationPage.aspx.designer.cs">
+      <DependentUpon>NumiAtivationPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiGeneralPageError.aspx.cs">
+      <DependentUpon>NumiGeneralPageError.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiGeneralPageError.aspx.designer.cs">
+      <DependentUpon>NumiGeneralPageError.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiInsertNewCoin.aspx.cs">
+      <DependentUpon>NumiInsertNewCoin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiInsertNewCoin.aspx.designer.cs">
+      <DependentUpon>NumiInsertNewCoin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiLoginUser.aspx.cs">
+      <DependentUpon>NumiLoginUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiLoginUser.aspx.designer.cs">
+      <DependentUpon>NumiLoginUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiMainPage.aspx.cs">
+      <DependentUpon>NumiMainPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiMainPage.aspx.designer.cs">
+      <DependentUpon>NumiMainPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Money.cs" />
+    <Compile Include="NumiManageCoins.aspx.cs">
+      <DependentUpon>NumiManageCoins.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiManageCoins.aspx.designer.cs">
+      <DependentUpon>NumiManageCoins.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiManageUsers.aspx.cs">
+      <DependentUpon>NumiManageUsers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiManageUsers.aspx.designer.cs">
+      <DependentUpon>NumiManageUsers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiMoneyDetail.aspx.cs">
+      <DependentUpon>NumiMoneyDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiMoneyDetail.aspx.designer.cs">
+      <DependentUpon>NumiMoneyDetail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiMyCollection.aspx.cs">
+      <DependentUpon>NumiMyCollection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiMyCollection.aspx.designer.cs">
+      <DependentUpon>NumiMyCollection.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiPageError404.aspx.cs">
+      <DependentUpon>NumiPageError404.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiPageError404.aspx.designer.cs">
+      <DependentUpon>NumiPageError404.aspx</DependentUpon>
     </Compile>
     <Compile Include="Numismatic.Master.cs">
       <DependentUpon>Numismatic.Master</DependentUpon>
@@ -87,13 +168,20 @@
     <Compile Include="Numismatic.Master.designer.cs">
       <DependentUpon>Numismatic.Master</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegisterUser.aspx.cs">
-      <DependentUpon>RegisterUser.aspx</DependentUpon>
+    <Compile Include="NumiStatistics.aspx.cs">
+      <DependentUpon>NumiStatistics.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="RegisterUser.aspx.designer.cs">
-      <DependentUpon>RegisterUser.aspx</DependentUpon>
+    <Compile Include="NumiStatistics.aspx.designer.cs">
+      <DependentUpon>NumiStatistics.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="NumiRegisterUser.aspx.cs">
+      <DependentUpon>NumiRegisterUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiRegisterUser.aspx.designer.cs">
+      <DependentUpon>NumiRegisterUser.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +194,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

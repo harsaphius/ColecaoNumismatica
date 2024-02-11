@@ -11,62 +11,107 @@ namespace ColecaoNumismatica
 {
 
 
-    public partial class Numismatic
+    public partial class NumiLoginUser
     {
 
         /// <summary>
-        /// head control.
+        /// lbl_ActivatedUser control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder head;
+        protected global::System.Web.UI.WebControls.Label lbl_ActivatedUser;
 
         /// <summary>
-        /// form1 control.
+        /// btn_facebook control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.WebControls.LinkButton btn_facebook;
 
         /// <summary>
-        /// btn_home control.
+        /// btn_google control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btn_home;
+        protected global::System.Web.UI.WebControls.LinkButton btn_google;
 
         /// <summary>
-        /// btn_insertNewCoin control.
+        /// rfv_tbuser control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btn_insertNewCoin;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_tbuser;
 
         /// <summary>
-        /// btn_manageCoins control.
+        /// tb_user control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btn_manageCoins;
+        protected global::System.Web.UI.WebControls.TextBox tb_user;
 
         /// <summary>
-        /// btn_manageUsers control.
+        /// rfv_password control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btn_manageUsers;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_password;
+
+        /// <summary>
+        /// tb_pw control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tb_pw;
+
+        /// <summary>
+        /// chkBoxRemember control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputCheckBox chkBoxRemember;
+
+        /// <summary>
+        /// btnLoginBE control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnLoginBE;
+
+        /// <summary>
+        /// lbtn_register control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lbtn_register;
+
+        /// <summary>
+        /// ValidationSummary1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
 
         /// <summary>
         /// lbl_message control.
@@ -78,48 +123,39 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.Label lbl_message;
 
         /// <summary>
-        /// tb_search control.
+        /// tb_emailpwrecover control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_search;
+        protected global::System.Web.UI.WebControls.TextBox tb_emailpwrecover;
 
         /// <summary>
-        /// btn_search control.
+        /// rev_email control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn_search;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rev_email;
 
         /// <summary>
-        /// btn_logout control.
+        /// rvf_email control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn_logout;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rvf_email;
 
         /// <summary>
-        /// ContentPlaceHolder1 control.
+        /// btnRecoverPasswordFE control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder ContentPlaceHolder1;
-
-        /// <summary>
-        /// novoAdmin control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton novoAdmin;
+        protected global::System.Web.UI.WebControls.Button btnRecoverPasswordFE;
     }
 }
