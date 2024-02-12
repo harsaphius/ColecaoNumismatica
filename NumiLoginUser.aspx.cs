@@ -14,8 +14,6 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Response.Write($"{DecryptString("UktvQa4zps1PYxKe9W7L0w == ")}");
-
             if (string.IsNullOrEmpty(tb_emailpwrecover.Text))
             {
                 rvf_email.Enabled = false;

@@ -121,14 +121,19 @@ namespace ColecaoNumismatica
                 myCon.Close();
 
                 lbl_message.Text = "Adicionado à sua coleção.";
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('messageAR').classList.Add('added')", true);
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('like').style.color = 'red'", true);
+                
+                string script = @"
+                                    document.getElementById('messageAR').classList.remove('hidden');
+                                    document.getElementById('messageAR').classList.add('added');
+                                    document.getElementById('like').style.color = 'red';
+                                ";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
             }
 
             if (e.CommandName.Equals("dislike"))
             {
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('messageAR').classList.Add('removed')", true);
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('dislike').style.color = 'red'", true);
+                
                 SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
                 myCommand2.Parameters.AddWithValue("@CodMN", e.CommandArgument);
                 myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
@@ -142,6 +147,14 @@ namespace ColecaoNumismatica
                 myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
                 myCon.Close();
                 lbl_message.Text = "Removido da sua coleção.";
+
+                string script = @"
+                                    document.getElementById('messageAR').classList.remove('hidden');
+                                    document.getElementById('messageAR').classList.add('removed');
+                                    document.getElementById('dislike').style.color = 'black';
+                                ";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
             }
 
 

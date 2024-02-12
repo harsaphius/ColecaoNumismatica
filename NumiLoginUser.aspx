@@ -6,7 +6,7 @@
   <div class="container-fluid h-custom">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-md-9 col-lg-6 col-xl-5 justify-content-center">
-        <img src="..\Images\NumiCoin.png" class="img-fluid" style="width:550px;" alt="Cinel Logo">
+        <img src="..\Images\NumiCoin.png" class="img-fluid" style="width:550px;" alt="NumiCoin Logo">
       </div>
 
       <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">

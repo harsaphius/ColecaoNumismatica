@@ -3,7 +3,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server"> 
 <div><asp:Label ID="lbl_messageUser" runat="server" Text=""></asp:Label></div>
-<div id="messageAR"><asp:Label ID="lbl_message" runat="server" Text=""></asp:Label></div>
+<div id="messageAR" class="hidden"><asp:Label ID="lbl_message" runat="server" Text=""></asp:Label></div>
 <div style="display:flex;justify-content:center;padding:20px;">
      <asp:Repeater ID="rpt_mainpage" runat="server" OnItemCommand="rpt_mainpage_ItemCommand">
         <HeaderTemplate>
