@@ -69,3 +69,21 @@ body {
 .not_hidden {
     display: block;
 }
+
+
+/*FontAwesome Icon Button*/
+.fa-icon-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.added {
+    color:green;
+    border:inset;
+}
+.removed 
+{
+    color: red;
+    border: inset;
+}

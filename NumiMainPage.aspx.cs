@@ -21,31 +21,24 @@ namespace ColecaoNumismatica
                 string isAdmin = Session["Admin"].ToString();
                 string user = Session["User"].ToString();
 
-                lbl_messageUser.Text = "Bem-vindo " + user; 
+                lbl_messageUser.Text = "Bem-vindo " + user;
 
-                //if (!Page.IsPostBack)
-                //{
-                //string script1 = "document.getElementById('btn_home').classList.remove('hidden')";
-                //string script2 = "document.getElementById('searchbar').classList.add('d-flex');";
-                //string script3 = "document.getElementById('searchbar').classList.remove('hidden');";
-                //string script4 = "document.getElementById('logoutbutton').classList.remove('hidden');";
-                //string script5 = "document.getElementById('Admin').classList.remove('hidden');";
+                string script = @"
+                            document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('searchbar').classList.add('d-flex');
+                            document.getElementById('searchbar').classList.remove('hidden');
+                            document.getElementById('logoutbutton').classList.remove('hidden');
+                            document.getElementById('Admin').classList.remove('hidden');";
 
-                //ScriptManager.RegisterStartupScript(this, GetType(), "RemoveClasses",
-                //    script1 + script2 + script3 + script4 + script5, true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
 
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('btn_home').classList.remove('hidden')", true);
-                //Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('searchbar').classList.add('d-flex')", true);
-                //Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('searchbar').classList.remove('hidden')", true);
-                //Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('logoutbutton').classList.remove('hidden')", true);
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('Admin').classList.remove('hidden')", true);
-                //}
-                /* else*/
                 if (isAdmin == "Yes")
                 {
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('btn_insertNewCoin').classList.remove('hidden')", true);
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('btn_manageCoins').classList.remove('hidden')", true);
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('btn_manageUsers').classList.remove('hidden')", true);
+                      string script2 = @"
+                            document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                            document.getElementById('btn_manageCoins').classList.remove('hidden');
+                            document.getElementById('btn_manageUsers').classList.remove('hidden');";
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script2, true);
                 }
 
                 List<Money> LstMoney = new List<Money>();
@@ -80,67 +73,78 @@ namespace ColecaoNumismatica
 
         protected void rpt_mainpage_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int cod = Convert.ToInt32(e.CommandArgument);
-            ((Button)e.Item.FindControl("lbtn_like")).CommandArgument = cod.ToString();
+            //// Get the index of the item where the command was triggered
+            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
+            SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
+            myCommand.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+
+            SqlParameter CodCollection = new SqlParameter();
+            CodCollection.ParameterName = "@CodCollection";
+            CodCollection.Direction = ParameterDirection.Output;
+            CodCollection.SqlDbType = SqlDbType.Int;
+
+            myCommand.Parameters.Add(CodCollection);
+
+            SqlParameter UserHasCollection = new SqlParameter();
+            UserHasCollection.ParameterName = "@UserHasCollection";
+            UserHasCollection.Direction = ParameterDirection.Output;
+            UserHasCollection.SqlDbType = SqlDbType.Int;
+
+            myCommand.Parameters.Add(UserHasCollection);
+
+            myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+            myCommand.CommandText = "NumiCollectionExists"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+            myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+            myCon.Open(); //Abrir a conexão
+            myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+            myCon.Close();
+
+            int AnswCodCollection = Convert.ToInt32(myCommand.Parameters["@CodCollection"].Value);
+            int AnswUserHasCollection = Convert.ToInt32(myCommand.Parameters["@UserHasCollection"].Value);
+
 
             if (e.CommandName.Equals("like"))
             {
-                //// Get the index of the item where the command was triggered
                 
-                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
+                SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
+                myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+                myCommand2.Parameters.AddWithValue("@CodMN", e.CommandArgument);
+                myCommand2.Parameters.AddWithValue("@CodCollection", AnswCodCollection);
 
-                SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
-                myCommand.Parameters.AddWithValue("@CodMN", cod); //Adicionar o valor da tb_user ao parâmetro @nome
-                myCommand.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+                myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                myCommand2.CommandText = "NumiCollectionAdd"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
 
-
-                SqlParameter CodCollection = new SqlParameter();
-                CodCollection.ParameterName = "@CodCollection";
-                CodCollection.Direction = ParameterDirection.Output;
-                CodCollection.SqlDbType = SqlDbType.Int;
-
-                myCommand.Parameters.Add(CodCollection);
-
-                SqlParameter UserHasCollection = new SqlParameter();
-                UserHasCollection.ParameterName = "@UserHasCollection";
-                UserHasCollection.Direction = ParameterDirection.Output;
-                UserHasCollection.SqlDbType = SqlDbType.Int;
-
-                myCommand.Parameters.Add(UserHasCollection);
-
-                myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                myCommand.CommandText = "NumiCollection"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                myCommand2.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
                 myCon.Open(); //Abrir a conexão
-                myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-                int AnswCodCollection = Convert.ToInt32(myCommand.Parameters["@CodCollection"].Value);
-                int AnswUserHasCollection = Convert.ToInt32(myCommand.Parameters["@UserHasCollection"].Value);
+                myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+                myCon.Close();
 
-                myCon.Close(); //Fechar a conexão
-
-                if (AnswUserHasCollection == 0)
-                {
-                    lbl_message.Text = "Adicionado à sua coleção.";
-                }
-                else
-                {
-                    lbl_message.Text = "Utilizador já tem coleção.";
-                }
-
+                lbl_message.Text = "Adicionado à sua coleção.";
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('messageAR').classList.Add('added')", true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('like').style.color = 'red'", true);
             }
-            //else if (e.CommandName == "dislike")
-            //{
-            //    // Get the index of the item where the command was triggered
-            //    int index = e.Item.ItemIndex;
 
-            //    // Get the LinkButton that triggered the command
-            //    LinkButton lbtn_dislike = (LinkButton)rpt_mainpage.Items[index].FindControl("lbtn_dislike");
+            if (e.CommandName.Equals("dislike"))
+            {
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('messageAR').classList.Add('removed')", true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "", "document.getElementById('dislike').style.color = 'red'", true);
+                SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
+                myCommand2.Parameters.AddWithValue("@CodMN", e.CommandArgument);
+                myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+                myCommand2.Parameters.AddWithValue("@CodCollection", AnswCodCollection);
 
-            //    // Get the icon inside the LinkButton and change its color
-            //    HtmlGenericControl icon_dislike = (HtmlGenericControl)lbtn_dislike.Controls[0];
-            //    icon_dislike.Style["color"] = "black"; // Change color to blue
-            //}
+                myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                myCommand2.CommandText = "NumiCollectionRemove"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                myCommand2.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                myCon.Open(); //Abrir a conexão
+                myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+                myCon.Close();
+                lbl_message.Text = "Removido da sua coleção.";
+            }
+
+
         }
     }
 }
