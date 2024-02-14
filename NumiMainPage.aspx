@@ -48,7 +48,7 @@
 </div>
 
 <!--Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="align-items:center;">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="justify-content:center;">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -60,15 +60,19 @@
       <div class="modal-body">
         <div>
          <div class="form-group">
-            <label for="ddl_estado" class="col-form-label">Estado:</label>
+             <label for="ddl_estado" class="col-form-label">Estado:</label>
              <asp:DropDownList ID="ddl_estado" runat="server" DataSourceID="SQLDStateMN" DataTextField="Estado" DataValueField="CodEstado"></asp:DropDownList>
              <asp:SqlDataSource ID="SQLDStateMN" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM [NumiCoinState] ORDER BY CodEstado"></asp:SqlDataSource>
-          </div>
+             <br />
+             <label for="tb_quantidade" class="col-form-label">Estado:</label>
+             <asp:TextBox ID="tb_quantidade" runat="server" CssClass="form-control" TextMode="Number"></asp:TextBox>
+         </div>
         </div>
       </div>
       <div class="modal-footer">
         <asp:Button class="btn btn-secondary" ID="btn_close" runat="server" Text="Fechar" />
-        <asp:Button class="btn btn-primary" ID="btn_add" runat="server" Text="Adicionar"  OnClick="btn_add_Click"/>
+        <asp:Button class="btn btn-primary" ID="btn_add" runat="server" Text="Adicionar" OnClick="btn_add_Click"/>
+        <asp:Button class="btn btn-primary" ID="Button1" runat="server" Text="Remover" OnClick="btn_remove_Click"/>
       </div>
     </div>
   </div>
