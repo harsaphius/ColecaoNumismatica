@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Money Detail" Language="C#" MasterPageFile="~/Numismatic.Master" AutoEventWireup="true" CodeBehind="NumiMoneyDetail.aspx.cs" Inherits="ColecaoNumismatica.NumiMoneyDetail" %>
+﻿<%@ Page Title="Money Detail" Language="C#" MasterPageFile="~/Numismatic.Master" AutoEventWireup="true" CodeBehind="NumiMoneyDetail.aspx.cs" Inherits="ColecaoNumismatica.NumiMoneyDetail"  ValidateRequest="false" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
         img{

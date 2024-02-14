@@ -1,5 +1,13 @@
-﻿<%@ Page Title="Main Page" Language="C#" MasterPageFile="~/Numismatic.Master" AutoEventWireup="true" CodeBehind="NumiMainPage.aspx.cs" Inherits="ColecaoNumismatica.NumiMainPage" EnableEventValidation="false"%>
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+﻿<%@ Page Title="Main Page" Language="C#" MasterPageFile="~/Numismatic.Master" AutoEventWireup="true" CodeBehind="NumiMainPage.aspx.cs" Inherits="ColecaoNumismatica.NumiMainPage"  ValidateRequest="false" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">  
+<script>
+    function changeColor(elementId) {
+        var element = document.getElementById(elementId);
+        if (element) {
+            element.style.color = 'red'; // Change color to red
+        }
+    }
+</script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server"> 
 <div><asp:Label ID="lbl_messageUser" runat="server" Text=""></asp:Label></div>
@@ -38,4 +46,32 @@
         </FooterTemplate>
     </asp:Repeater>
 </div>
+
+<!--Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="align-items:center;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Qual é o estado da moeda?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+         <div class="form-group">
+            <label for="ddl_estado" class="col-form-label">Estado:</label>
+             <asp:DropDownList ID="ddl_estado" runat="server" DataSourceID="SQLDStateMN" DataTextField="Estado" DataValueField="CodEstado"></asp:DropDownList>
+             <asp:SqlDataSource ID="SQLDStateMN" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM [NumiCoinState] ORDER BY CodEstado"></asp:SqlDataSource>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <asp:Button class="btn btn-secondary" ID="btn_close" runat="server" Text="Fechar" />
+        <asp:Button class="btn btn-primary" ID="btn_add" runat="server" Text="Adicionar"  OnClick="btn_add_Click"/>
+      </div>
+    </div>
+  </div>
+</div>
+
 </asp:Content>

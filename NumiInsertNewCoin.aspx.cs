@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace ColecaoNumismatica
 {
@@ -18,6 +15,32 @@ namespace ColecaoNumismatica
             if (Session["Logado"] == null)
             {
                 Response.Redirect("NumiLoginUser.aspx");
+            }
+            else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
+            {
+                string isAdmin = Session["Admin"].ToString();
+                string user = Session["User"].ToString();
+
+                string script = @"
+                            document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('btn_mycollection').classList.remove('hidden');
+                            document.getElementById('searchbar').classList.add('d-flex');
+                            document.getElementById('searchbar').classList.remove('hidden');
+                            document.getElementById('logoutbutton').classList.remove('hidden');
+                            document.getElementById('Admin').classList.remove('hidden');";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+
+                if (isAdmin == "Yes")
+                {
+                    string script2 = @"
+                            document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                            document.getElementById('btn_manageCoins').classList.remove('hidden');
+                            document.getElementById('btn_manageUsers').classList.remove('hidden');
+                            document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script2, true);
+                }
             }
         }
 
@@ -30,7 +53,16 @@ namespace ColecaoNumismatica
             myCommand.Parameters.AddWithValue("@CodTipoMN", ddl_tipo.SelectedValue);
             myCommand.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
             myCommand.Parameters.AddWithValue("@Descricao", tb_descricao.Text);
-            myCommand.Parameters.AddWithValue("@ValorCunho", tb_valorCunho.Text);
+            if(tb_valorCunho.Text.Contains("."))
+            {
+                tb_valorCunho.Text = tb_valorCunho.Text.Replace(".", ",");
+                myCommand.Parameters.AddWithValue("@ValorCunho", Convert.ToDecimal(tb_valorCunho.Text));
+            }
+            else
+            {
+                myCommand.Parameters.AddWithValue("@ValorCunho", Convert.ToDecimal(tb_valorCunho.Text));
+            }
+            
 
             //Devolver o código da moeda/nota
             SqlParameter CodMN = new SqlParameter();
@@ -48,6 +80,29 @@ namespace ColecaoNumismatica
             myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
 
             int AnswCodMN = Convert.ToInt32(myCommand.Parameters["@CodMN"].Value);
+
+            //Insert Coin State
+
+            SqlCommand sqlCommand2 = new SqlCommand();
+
+            sqlCommand2.Connection = myCon;
+            sqlCommand2.Parameters.AddWithValue("@CodMN", AnswCodMN);
+            sqlCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
+            if (tb_valorAtual.Text.Contains("."))
+            {
+                tb_valorAtual.Text = tb_valorAtual.Text.Replace(".", ","); 
+                sqlCommand2.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(tb_valorAtual.Text));
+            }
+            else
+            {
+                sqlCommand2.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(tb_valorAtual.Text));
+            }
+           
+            sqlCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+            sqlCommand2.CommandText = "NumiCoinStateMNInsert"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+            sqlCommand2.ExecuteNonQuery();
+            myCon.Close();
 
             //Insert Coin MNImage
             //Imagens
@@ -101,26 +156,11 @@ namespace ColecaoNumismatica
                     connection.Open();
                     sqlCommand3.ExecuteNonQuery();
                     connection.Close();
-
-                    int AnswCodImagem = Convert.ToInt32(sqlCommand3.Parameters["@CodImagem"].Value);
-
-                    //Insert Coin State
-                    SqlCommand sqlCommand2 = new SqlCommand();
-
-                    sqlCommand2.Connection = myCon;
-                    sqlCommand2.Parameters.AddWithValue("@CodMN", AnswCodMN);
-                    sqlCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
-                    sqlCommand2.Parameters.AddWithValue("@CodImagem", AnswCodImagem);
-
-                    sqlCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                    sqlCommand2.CommandText = "NumiCoinStateMNInsert"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                    sqlCommand2.ExecuteNonQuery();
-
-                }
+                }              
             }
             myCon.Close();
 
+            lbl_message.Text = "Money inserido com sucesso!";
         }
     }
 }

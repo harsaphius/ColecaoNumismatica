@@ -15,6 +15,12 @@ namespace ColecaoNumismatica
         /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Logado"] == null)
+            {
+                Response.Redirect("NumiLoginUser.aspx");
+            }
+            else { 
+
             string utilizador = DecryptString(Request.QueryString["user"]);
 
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
@@ -34,6 +40,7 @@ namespace ColecaoNumismatica
             Session["ActivatedUser"] = "Conta Ativada com Sucesso! Proceda ao login!";
                 
             Response.Redirect("NumiLoginUser.aspx?redirected=true");
+            }
 
         }
 

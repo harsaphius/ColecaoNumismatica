@@ -17,12 +17,35 @@ namespace ColecaoNumismatica
                 Response.Redirect("NumiMainPage.aspx");
 
             }
-            else
+            else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
             {
+                string isAdmin = Session["Admin"].ToString();
+                string user = Session["User"].ToString();
+
+                string script = @"
+                            document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('searchbar').classList.add('d-flex');
+                            document.getElementById('searchbar').classList.remove('hidden');
+                            document.getElementById('logoutbutton').classList.remove('hidden');
+                            document.getElementById('Admin').classList.remove('hidden');";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+
+                if (isAdmin == "Yes")
+                {
+                    string script2 = @"
+                            document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                            document.getElementById('btn_manageCoins').classList.remove('hidden');
+                            document.getElementById('btn_manageUsers').classList.remove('hidden');
+                            document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+                    
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script2, true);
+                }
+
 
                 List<Money> LstMoney = new List<Money>();
 
-                string query = $"SELECT NC.[CodMN],NC.[Titulo],NC.[Descricao],NS.[Estado],NC.[ValorCunho],NSMN.[ValorAtual],NCI.[Imagem],NCT.[Tipo] AS [Tipo] FROM [dbo].[NumiCoinMoney] NC INNER JOIN [dbo].[NumiCoinStateMN] NSMN ON NC.[CodMN] = NSMN.[CodMN] INNER JOIN [dbo].[NumiCoinState] NS ON NSMN.[CodEstado] = NS.[CodEstado] INNER JOIN [dbo].[NumiCoinMNImage] NCI ON NSMN.[CodImagem] = NCI.[CodImagem] INNER JOIN[dbo].[NumiCoinMNType] NCT ON NC.[CodTipoMN] = NCT.[CodTipoMN] WHERE NC.[CodMN] = {Request.QueryString["id"]}; ";
+                string query = $"SELECT NC.[CodMN], NC.[Titulo], NC.[Descricao], NS.[Estado], NC.[ValorCunho], NSMN.[ValorAtual], NCI.[Imagem], NCT.[Tipo] AS [Tipo] FROM[dbo].[NumiCoinMoney] NC INNER JOIN[dbo].[NumiCoinStateMN] NSMN ON NC.[CodMN] = NSMN.[CodMN]INNER JOIN[dbo].[NumiCoinState] NS ON NSMN.[CodEstado] = NS.[CodEstado] INNER JOIN[dbo].[NumiCoinMNImage] NCI ON NC.[CodMN] = NCI.[CodMN] INNER JOIN[dbo].[NumiCoinMNType] NCT ON NC.[CodTipoMN] = NCT.[CodTipoMN] WHERE NC.[CodMN] = { Request.QueryString["id"]}; ";
 
                 SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
 
@@ -33,8 +56,8 @@ namespace ColecaoNumismatica
                 SqlDataReader dr = myCommand.ExecuteReader();
 
                 while (dr.Read())
-                {   
-                    
+                {
+
                     lbl_titulo.Text = dr["Titulo"].ToString();
                     lt_descricao.Text = dr["Descricao"].ToString();
                     lbl_estado.Text = dr["Estado"].ToString();
@@ -44,7 +67,7 @@ namespace ColecaoNumismatica
 
                     Money record = new Money();
                     record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
-                    LstMoney.Add(record);  
+                    LstMoney.Add(record);
                 }
 
                 myCon.Close();
@@ -61,8 +84,8 @@ namespace ColecaoNumismatica
                     imagePanel.Controls.Add(new LiteralControl("&nbsp;"));
                 }
 
-
             }
+
         }
 
         protected void btn_back_Click(object sender, EventArgs e)

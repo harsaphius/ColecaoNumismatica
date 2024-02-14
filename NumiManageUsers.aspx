@@ -30,9 +30,9 @@
                     <tr style="background-color:ghostwhite;"> 
                          <td><asp:Label ID="lbl_cod" runat="server" Text=""></asp:Label></td>
                          <td><asp:Label ID="lbl_user" runat="server"></asp:Label></td>
-                         <td><asp:TextBox ID="tb_ativa" runat="server"></asp:TextBox></td>
+                         <td><asp:CheckBox ID="ckb_ativa" runat="server" /></td>
                          <td><asp:TextBox ID="tb_email" runat="server"></asp:TextBox></td>
-                         <td><asp:TextBox ID="tb_admin" runat="server"></asp:TextBox></td>
+                         <td><asp:CheckBox ID="ckb_admin" runat="server" /></td>
                          <td><asp:ImageButton ID="imgBtn_grava" runat="server" ImageURL="~/Icons/save.ico" CommandName="imgBtn_grava"/>
                          &nbsp;&nbsp;<asp:ImageButton ID="imgBtn_apaga" runat="server" ImageURL="~/icons/delete.ico" CommandName="imgBtn_apaga"/> </td>
                     </tr>
@@ -43,4 +43,5 @@
     </asp:Repeater>
     <asp:SqlDataSource ID="SQLDSUsers" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM [NumiCoinUser]"></asp:SqlDataSource>
     </div>
+
 </asp:Content>

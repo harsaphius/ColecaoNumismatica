@@ -87,3 +87,13 @@ body {
     color: red;
     border: inset;
 }
+
+.notcollected{
+    color:darkgoldenrod;
+    border:inset;
+}
+
+/*.btn-light{
+    border:inset;
+    color:floralwhite;
+}*/

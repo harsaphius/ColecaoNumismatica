@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Web;
 using System.Web.Security;
+using ASPSnippets.FaceBookAPI;
 
 namespace ColecaoNumismatica
 {
@@ -253,6 +254,8 @@ namespace ColecaoNumismatica
         /// <param name="e"></param>
         protected void btn_facebook_Click(object sender, EventArgs e)
         {
+            FaceBookConnect.Authorize("user_photosw,email", Request.Url.AbsoluteUri.Split('?')[0]);
+            Session["Facebook"] = "Yes";
 
         }
 
@@ -266,27 +269,28 @@ namespace ColecaoNumismatica
             string clientid = ConfigurationManager.AppSettings["clientid"];
             string redirectionURL = ConfigurationManager.AppSettings["redirection_url"];
             string url = "https://accounts.google.com/o/oauth2/v2/auth?scope=profile&include_granted_scopes=true&redirect_uri=" + redirectionURL + "&response_type=code&client_id=" + clientid + "";
-            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
-                       1,                              // version
-                       clientid,                       // username
-                       DateTime.Now,                   // issue time
-                       DateTime.Now.AddMinutes(30),    // expiration time
-                       false,                          // persistent
-                       "user"                          // user data (optional)
-                   );
 
-            // Encrypt the ticket
-            string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+            //FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
+            //           1,                              // version
+            //           clientid,                       // username
+            //           DateTime.Now,                   // issue time
+            //           DateTime.Now.AddMinutes(30),    // expiration time
+            //           false,                          // persistent
+            //           "user"                          // user data (optional)
+            //       );
 
-            // Create a new cookie and set its value to the encrypted ticket
-            HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+            //// Encrypt the ticket
+            //string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
 
-            // Set cookie expiration
-            authCookie.Expires = authTicket.Expiration;
+            //// Create a new cookie and set its value to the encrypted ticket
+            //HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
 
-            // Add the cookie to the response
-            Response.Cookies.Add(authCookie);
+            //// Set cookie expiration
+            //authCookie.Expires = authTicket.Expiration;
 
+            //// Add the cookie to the response
+            //Response.Cookies.Add(authCookie);
+            Session["Google"] = "Yes";
             Response.Redirect(url);
         }
 

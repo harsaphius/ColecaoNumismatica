@@ -23,22 +23,25 @@ namespace ColecaoNumismatica
 
                 lbl_messageUser.Text = "Bem-vindo " + user;
 
-                string script = @"
+                string script2 = @"
                             document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('searchbar').classList.add('d-flex');
                             document.getElementById('searchbar').classList.remove('hidden');
                             document.getElementById('logoutbutton').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script2, true);
 
                 if (isAdmin == "Yes")
                 {
-                      string script2 = @"
+                    string script3 = @"
                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
                             document.getElementById('btn_manageCoins').classList.remove('hidden');
-                            document.getElementById('btn_manageUsers').classList.remove('hidden');";
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script2, true);
+                            document.getElementById('btn_manageUsers').classList.remove('hidden');
+                            document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script3, true);
                 }
 
                 List<Money> LstMoney = new List<Money>();
@@ -46,9 +49,7 @@ namespace ColecaoNumismatica
                 string query = "SELECT NCM.CodMN,NCM.Titulo, NCM.ValorCunho, NCI.Imagem FROM NumiCoinMoney AS NCM LEFT JOIN( SELECT NCI2.CodMN, NCI2.Imagem FROM (SELECT CodMN, MIN(CodImagem) AS FirstImage FROM NumiCoinMNImage GROUP BY CodMN) AS NCI JOIN NumiCoinMNImage AS NCI2 ON NCI.FirstImage = NCI2.CodImagem) AS NCI ON NCM.CodMN = NCI.CodMN;";
 
                 SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
-
                 SqlCommand myCommand = new SqlCommand(query, myCon);
-
                 myCon.Open();
 
                 SqlDataReader dr = myCommand.ExecuteReader();
@@ -66,7 +67,6 @@ namespace ColecaoNumismatica
                 myCon.Close();
                 rpt_mainpage.DataSource = LstMoney;
                 rpt_mainpage.DataBind();
-
             }
         }
 
@@ -103,41 +103,60 @@ namespace ColecaoNumismatica
             int AnswCodCollection = Convert.ToInt32(myCommand.Parameters["@CodCollection"].Value);
             int AnswUserHasCollection = Convert.ToInt32(myCommand.Parameters["@UserHasCollection"].Value);
 
-
             if (e.CommandName.Equals("like"))
             {
-                
-                SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
-                myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
-                myCommand2.Parameters.AddWithValue("@CodMN", e.CommandArgument);
-                myCommand2.Parameters.AddWithValue("@CodCollection", AnswCodCollection);
+                string modalScript = @"$('#exampleModal').modal('show');";
 
-                myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                myCommand2.CommandText = "NumiCollectionAdd"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+                //Register script to show the modal
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "exampleModalScript", modalScript, true);
+                Session["ModalOpened"] = true;
+            }
+            if (Session["ModalOpened"] != null && (bool)Session["ModalOpened"])
+            {
+                string value = ddl_estado.SelectedValue;
 
-                myCommand2.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-                myCon.Open(); //Abrir a conexão
-                myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-                myCon.Close();
+                if (Session["AddClicked"] != null && (bool)Session["AddClicked"])
+                {
+                    //((LinkButton)e.Item.FindControl("lbtn_like")).CommandArgument = e.CommandArgument.ToString();
+                    SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
+                    myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+                    myCommand2.Parameters.AddWithValue("@CodMN", e.CommandArgument);
+                    myCommand2.Parameters.AddWithValue("@CodCollection", AnswCodCollection);
 
-                lbl_message.Text = "Adicionado à sua coleção.";
-                
-                string script = @"
-                                    document.getElementById('messageAR').classList.remove('hidden');
-                                    document.getElementById('messageAR').classList.add('added');
-                                    document.getElementById('like').style.color = 'red';
-                                ";
+                    myCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
 
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
+                    myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                    myCommand2.CommandText = "NumiCollectionAdd"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                    myCommand2.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                    myCon.Open(); //Abrir a conexão
+                    myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+                    myCon.Close();
+
+                    Session["AddClicked"] = false;
+
+                    Session["ModalOpened"] = false;
+
+                    if (AnswUserHasCollection == 0)
+                    {
+                        lbl_message.Text = "Criada a sua coleção! Continue a adicionar items!";
+                    }
+                }
             }
 
             if (e.CommandName.Equals("dislike"))
             {
-                
+
                 SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
                 myCommand2.Parameters.AddWithValue("@CodMN", e.CommandArgument);
                 myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
                 myCommand2.Parameters.AddWithValue("@CodCollection", AnswCodCollection);
+                SqlParameter UserDoesnHaveCoin = new SqlParameter();
+                UserDoesnHaveCoin.ParameterName = "@UserDoesntHaveCoin";
+                UserDoesnHaveCoin.Direction = ParameterDirection.Output;
+                UserDoesnHaveCoin.SqlDbType = SqlDbType.Int;
+
+                myCommand2.Parameters.Add(UserDoesnHaveCoin);
 
                 myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
                 myCommand2.CommandText = "NumiCollectionRemove"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
@@ -146,18 +165,50 @@ namespace ColecaoNumismatica
                 myCon.Open(); //Abrir a conexão
                 myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
                 myCon.Close();
-                lbl_message.Text = "Removido da sua coleção.";
 
-                string script = @"
+                int AnswUserDoesntHaveCoin = Convert.ToInt32(myCommand2.Parameters["@UserDoesntHaveCoin"].Value);
+
+                if (AnswUserDoesntHaveCoin == 1)
+                {
+                    string script = @"
                                     document.getElementById('messageAR').classList.remove('hidden');
                                     document.getElementById('messageAR').classList.add('removed');
                                     document.getElementById('dislike').style.color = 'black';
                                 ";
 
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
+
+                    lbl_message.Text = "Removido da sua coleção.";
+                }
+                else
+                {
+                    string script = @"
+                                    document.getElementById('messageAR').classList.remove('hidden');
+                                    document.getElementById('messageAR').classList.add('notcollected');
+                                ";
+
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
+
+                    lbl_message.Text = "Este artigo não faz parte da sua coleção!";
+                }
             }
-
-
         }
+
+        protected void btn_add_Click(object sender, EventArgs e)
+        {
+            Session["AddClicked"] = true;
+
+            string script = @"
+                                    document.getElementById('messageAR').classList.remove('hidden');
+                                    document.getElementById('messageAR').classList.add('added');
+                                    document.getElementById('like').style.color = 'red';
+                                ";
+
+            Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
+
+            lbl_message.Text = "Adicionado à sua coleção.";
+        }
+
     }
 }
+

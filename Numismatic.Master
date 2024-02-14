@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Numismatic.master.cs" Inherits="ColecaoNumismatica.Numismatic" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Numismatic.master.cs" Inherits="ColecaoNumismatica.Numismatic"%>
 
 <!DOCTYPE html>
 
@@ -20,27 +20,29 @@
       <nav class="navbar navbar-light bg-primary">
         <div class="container-fluid">
             <div class="navbar">
-                <asp:LinkButton ID="btn_home" runat="server" class="btn btn-light hidden" OnClick="btn_home_Click">Home</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_insertNewCoin" runat="server" class="btn btn-light hidden" OnClick="btn_insertNewCoin_Click">Insert New Coin</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_manageCoins" runat="server" class="btn btn-light hidden" OnClick="btn_manageCoins_Click">Manage Coins</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_manageUsers" runat="server" class="btn btn-light hidden" OnClick="btn_manageUsers_Click">Manage Users</asp:LinkButton></div>&nbsp;
+                <asp:LinkButton ID="btn_home" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_home_Click" CausesValidation="False">Home</asp:LinkButton>&nbsp;
+                <asp:LinkButton ID="btn_mycollection" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_mycollection_Click" CausesValidation="False">My Collection</asp:LinkButton>&nbsp;
+                <asp:LinkButton ID="btn_insertNewCoin" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_insertNewCoin_Click" CausesValidation="False">Insert New Coin</asp:LinkButton>&nbsp;
+                <asp:LinkButton ID="btn_manageCoins" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_manageCoins_Click" CausesValidation="False">Manage Coins</asp:LinkButton>&nbsp;
+                <asp:LinkButton ID="btn_manageUsers" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_manageUsers_Click" CausesValidation="False">Manage Users</asp:LinkButton>&nbsp;
+                <asp:LinkButton ID="btn_registerNewUser" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_registerNewUser_Click" CausesValidation="False">Register New User</asp:LinkButton></div>&nbsp;
                 <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
                <!-- Message -->
-                   <div class="text-white mb-3 mb-md-0">
+                   <div class="text-white mb-3 mb-md-0 hidden">
                           <asp:Label ID="lbl_message" runat="server" Text=""></asp:Label>
                    </div>
                <!-- Message -->
                <!--Search Bar -->
        
-                <div id="searchbar" class="hidden">
-                  <asp:TextBox ID="tb_search" class="form-control me-2" runat="server"  placeholder="Pesquisa"></asp:TextBox> &nbsp;
-                  <asp:Button ID="btn_search" runat="server" class="btn btn-light btn-md" Text="Pesquisar" OnClick="btn_search_Click"/>
+                <div id="searchbar" class="small hidden">
+                  <asp:TextBox ID="tb_search" class="form-control" runat="server"  placeholder="Pesquisa"></asp:TextBox> &nbsp;
+                  <asp:Button ID="btn_search" runat="server" class="btn btn-light btn-sm" Text="Pesquisar" OnClick="btn_search_Click"/>
                 </div>
             
                <!--Search Bar -->
                <!-- Logout -->
                    <div id="logoutbutton" class="hidden">
-                      &nbsp;<asp:Button ID="btn_logout" runat="server" Text="Logout" class="btn btn-light btn-md" OnClick="btn_logout_Click"/>
+                      &nbsp;<asp:Button ID="btn_logout" runat="server" Text="Logout" class="btn btn-light btn-sm" OnClick="btn_logout_Click"/>
                    </div>
                <!-- Logout -->
             </div>

@@ -24,6 +24,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.TextBox tb_titulo;
 
         /// <summary>
+        /// rfv_tbtitulo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_tbtitulo;
+
+        /// <summary>
         /// ddl_tipo control.
         /// </summary>
         /// <remarks>
@@ -78,6 +87,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.TextBox tb_valorCunho;
 
         /// <summary>
+        /// rfv_tbvalorCunho control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_tbvalorCunho;
+
+        /// <summary>
         /// tb_valorAtual control.
         /// </summary>
         /// <remarks>
@@ -85,6 +103,15 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox tb_valorAtual;
+
+        /// <summary>
+        /// rfv_tbvalorAtual control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_tbvalorAtual;
 
         /// <summary>
         /// fu_imagens control.

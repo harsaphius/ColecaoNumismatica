@@ -1,22 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ASPSnippets.FaceBookAPI;
+using ColecaoNumismatica.Classes;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using System.Text;
+using System.Web.Script.Serialization;
 
 namespace ColecaoNumismatica
 {
     public partial class NumiRegisterUser : System.Web.UI.Page
     {
+        string clientid = ConfigurationManager.AppSettings["clientid"];
+        string clientsecret = ConfigurationManager.AppSettings["clientsecret"];
+        string redirectionURL = ConfigurationManager.AppSettings["redirection_url"];
+        string url = ConfigurationManager.AppSettings["url"];
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            FaceBookConnect.API_Key = ConfigurationManager.AppSettings["facebookkey"];
+            FaceBookConnect.API_Secret = ConfigurationManager.AppSettings["facebooksecret"];
+            FaceBookConnect.Version = ConfigurationManager.AppSettings["facebookversion"];
+
+            string script = @"
+                            document.getElementById('btn_home').classList.remove('hidden');";
+
+            Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+
+            if (!IsPostBack)
+            {
+                if (Request.QueryString["code"] != null)
+                {
+                    if (Session["Google"].ToString() == "Yes")
+                    {
+                        GetToken(Request.QueryString["code"].ToString());
+                    }
+                    else if (Session["Facebook"].ToString() == "Yes")
+                    {
+                        string data = FaceBookConnect.Fetch(Request.QueryString["code"], "me", "id,name,email");
+                        FaceBookUser faceBookUser = new JavaScriptSerializer().Deserialize<FaceBookUser>(data);
+                        tb_user.Text = faceBookUser.Name;
+                        tb_email.Text = faceBookUser.Email;
+                        
+                    }
+                }
+
+                if (Request.QueryString["error"] == "access_denied")
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('User has denied access.')", true);
+                    return;
+                }
+            }
 
         }
 
@@ -28,7 +67,7 @@ namespace ColecaoNumismatica
             myCommand.Parameters.AddWithValue("@user", tb_user.Text); //Adicionar o valor da tb_user ao parâmetro @nome
             myCommand.Parameters.AddWithValue("@pw", EncryptString(tb_pw.Text));
             myCommand.Parameters.AddWithValue("@email", tb_email.Text);
-            
+
 
             SqlParameter UserRegister = new SqlParameter();
             UserRegister.ParameterName = "@UserRegister";
@@ -84,7 +123,7 @@ namespace ColecaoNumismatica
 
             }
             else
-            { 
+            {
                 lbl_message.Text = "Utilizador e/ou e-mail já existe!";
             }
 
@@ -191,6 +230,46 @@ namespace ColecaoNumismatica
 
             // Step 6. Return the decrypted string in UTF8 format
             return UTF8.GetString(Results);
+        }
+
+        public void GetToken(string code)
+        {
+            string poststring = "grant_type=authorization_code&code=" + code + "&client_id=" + clientid + "&client_secret=" + clientsecret + "&redirect_uri=" + redirectionURL + "";
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.Method = "POST";
+            UTF8Encoding utfenc = new UTF8Encoding();
+            byte[] bytes = utfenc.GetBytes(poststring);
+            Stream outputstream = null;
+            try
+            {
+                request.ContentLength = bytes.Length;
+                outputstream = request.GetRequestStream();
+                outputstream.Write(bytes, 0, bytes.Length);
+            }
+            catch { }
+            var response = (HttpWebResponse)request.GetResponse();
+            var streamReader = new StreamReader(response.GetResponseStream());
+            string responseFromServer = streamReader.ReadToEnd();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            Classes.Tokenclass obj = js.Deserialize<Classes.Tokenclass>(responseFromServer);
+            GetuserProfile(obj.access_token);
+        }
+        public void GetuserProfile(string accesstoken)
+        {
+            string url = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accesstoken + "";
+            WebRequest request = WebRequest.Create(url);
+            request.Credentials = CredentialCache.DefaultCredentials;
+            WebResponse response = request.GetResponse();
+            Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
+            reader.Close();
+            response.Close();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            Classes.Userclass userinfo = js.Deserialize<Classes.Userclass>(responseFromServer);
+            tb_user.Text = userinfo.name;
+            tb_email.Text = userinfo.email;
         }
     }
 }

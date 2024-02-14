@@ -83,7 +83,6 @@
                                         <asp:RegularExpressionValidator ID="rev_email" runat="server" ErrorMessage="E-mail no Formato Incorreto" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="tb_emailpwrecover" Text="*" ForeColor="Blue"></asp:RegularExpressionValidator>
                                         <asp:RequiredFieldValidator ID="rvf_email" runat="server" ErrorMessage="E-mail Obrigatório" ControlToValidate="tb_emailpwrecover" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
                                     </div>
-
                                     <asp:Button ID="btnRecoverPasswordFE" runat="server" class="btn btn-lg btn-primary btn-block" Text="Recuperar Password" OnClick="btnRecoverPasswordFE_Click" />
                                 </fieldset>
                             </div>

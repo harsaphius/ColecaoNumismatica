@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Insert New Coin" Language="C#" MasterPageFile="~/Numismatic.Master" AutoEventWireup="true" CodeBehind="NumiInsertNewCoin.aspx.cs" Inherits="ColecaoNumismatica.NumiInsertNewCoin" %>
+﻿<%@ Page Title="Insert New Coin" Language="C#" MasterPageFile="~/Numismatic.Master" AutoEventWireup="true" CodeBehind="NumiInsertNewCoin.aspx.cs" Inherits="ColecaoNumismatica.NumiInsertNewCoin"  ValidateRequest="false"  %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
@@ -9,6 +9,7 @@
     <div class="form-group col-md-6">
       <label for="tb_titulo">Título</label>
       <asp:TextBox ID="tb_titulo" runat="server" class="form-control" placeholder="Título"></asp:TextBox>
+      <asp:RequiredFieldValidator ID="rfv_tbtitulo" runat="server" ErrorMessage="Título Obrigatório" ControlToValidate="tb_titulo" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
     </div>
       
     <div class="form-group col-md-3">
@@ -28,21 +29,30 @@
   <div class="form-row">   
       <div class="form-group col-md-12">
         <label for="tb_descricao">Descrição</label>
-          <asp:TextBox ID="tb_descricao" runat="server" class="form-control" placeholder="Descrição da moeda ou nota" TextMode="MultiLine"></asp:TextBox>
+          <script src="ckeditor/ckeditor.js"></script>
+          <asp:TextBox ID="tb_descricao" runat="server" class="form-control" placeholder="Descrição da moeda ou nota" TextMode="MultiLine"></asp:TextBox>     
+           <script type="text/javascript">
+            CKEDITOR.replace('<%=tb_descricao.ClientID%>',
+            {
+                customConfig:'custom/editor_config.js'
+
+            }
+            );
+            </script>
       </div>
   </div>
      <!-- Row for Valor Cunho | Valor Atual | Imagens da Nota | Moeda -->
  <div class="form-row">
     <div class="form-group col-md-3">
       <label for="tb_valorCunho">Valor Cunho</label>
-      <asp:TextBox ID="tb_valorCunho" runat="server" class="form-control"></asp:TextBox>
+      <asp:TextBox ID="tb_valorCunho" runat="server" class="form-control" TextMode="SingleLine"></asp:TextBox>
+      <asp:RequiredFieldValidator ID="rfv_tbvalorCunho" runat="server" ErrorMessage="Valor Cunho Obrigatório" ControlToValidate="tb_valorCunho" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
     </div>
      
      <div class="form-group col-md-3">
-      <fieldset disabled>
           <label for="tb_valorCunho">Valor Atual</label>
-          <asp:TextBox ID="tb_valorAtual" runat="server" class="form-control"></asp:TextBox> 
-       </fieldset>
+          <asp:TextBox ID="tb_valorAtual" runat="server" class="form-control" TextMode="SingleLine"></asp:TextBox>
+          <asp:RequiredFieldValidator ID="rfv_tbvalorAtual" runat="server" ErrorMessage="Valor Atual Obrigatório" ControlToValidate="tb_valorAtual" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
     </div>
    
     <div class="form-group col-md-6">

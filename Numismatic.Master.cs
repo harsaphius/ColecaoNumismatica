@@ -103,6 +103,23 @@ namespace ColecaoNumismatica
             }
 
             myCon.Close();
+
+            Repeater repeaterControl = (Repeater)ContentPlaceHolder1.FindControl("rpt_mainpage");
+            if (repeaterControl != null)
+            {
+                repeaterControl.DataSource = LstMoney; // Replace GetDataSource() with your actual data source
+                repeaterControl.DataBind();
+            }
+        }
+
+        protected void btn_mycollection_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("NumiMyCollection.aspx");
+        }
+
+        protected void btn_registerNewUser_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("NumiRegisterUser.aspx");
         }
     }
 }
