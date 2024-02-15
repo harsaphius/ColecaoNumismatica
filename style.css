@@ -78,10 +78,16 @@ body {
     cursor: pointer;
 }
 
+.labelmessage {
+    color: white;
+    border: inset;
+}
+
 .added {
     color:green;
     border:inset;
 }
+
 .removed 
 {
     color: red;
@@ -92,8 +98,3 @@ body {
     color:darkgoldenrod;
     border:inset;
 }
-
-/*.btn-light{
-    border:inset;
-    color:floralwhite;
-}*/

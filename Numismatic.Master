@@ -22,13 +22,15 @@
             <div class="navbar">
                 <asp:LinkButton ID="btn_home" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_home_Click" CausesValidation="False">Home</asp:LinkButton>&nbsp;
                 <asp:LinkButton ID="btn_mycollection" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_mycollection_Click" CausesValidation="False">My Collection</asp:LinkButton>&nbsp;
+                <asp:LinkButton ID="btn_alterarpw" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_alterarpw_Click" CausesValidation="False">Alterar PW</asp:LinkButton>&nbsp;
                 <asp:LinkButton ID="btn_insertNewCoin" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_insertNewCoin_Click" CausesValidation="False">Insert New Coin</asp:LinkButton>&nbsp;
                 <asp:LinkButton ID="btn_manageCoins" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_manageCoins_Click" CausesValidation="False">Manage Coins</asp:LinkButton>&nbsp;
                 <asp:LinkButton ID="btn_manageUsers" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_manageUsers_Click" CausesValidation="False">Manage Users</asp:LinkButton>&nbsp;
+                <asp:LinkButton ID="btn_statistics" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_statistics_Click" CausesValidation="False">Statistics</asp:LinkButton>&nbsp;
                 <asp:LinkButton ID="btn_registerNewUser" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_registerNewUser_Click" CausesValidation="False">Register New User</asp:LinkButton></div>&nbsp;
                 <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
                <!-- Message -->
-                   <div class="text-white mb-3 mb-md-0 justify-content-center">
+                   <div class="text-white mb-3 mb-md-0 justify-content-center labelmessage">
                           <asp:Label ID="lbl_message" runat="server" Text=""></asp:Label>
                    </div>
                <!-- Message -->

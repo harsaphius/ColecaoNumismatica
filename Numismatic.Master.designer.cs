@@ -51,6 +51,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.LinkButton btn_mycollection;
 
         /// <summary>
+        /// btn_alterarpw control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btn_alterarpw;
+
+        /// <summary>
         /// btn_insertNewCoin control.
         /// </summary>
         /// <remarks>
@@ -76,6 +85,15 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btn_manageUsers;
+
+        /// <summary>
+        /// btn_statistics control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btn_statistics;
 
         /// <summary>
         /// btn_registerNewUser control.

@@ -121,5 +121,15 @@ namespace ColecaoNumismatica
         {
             Response.Redirect("NumiRegisterUser.aspx");
         }
+
+        protected void btn_alterarpw_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("NumiChangePassword.aspx");
+        }
+
+        protected void btn_statistics_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("NumiStatistics.aspx");
+        }
     }
 }

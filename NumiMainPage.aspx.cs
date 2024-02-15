@@ -12,6 +12,8 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            string query = "";
+
             if (Session["Logado"] == null)
             {
                 Response.Redirect("NumiLoginUser.aspx");
@@ -30,6 +32,7 @@ namespace ColecaoNumismatica
                 string script2 = @"
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
+                            document.getElementById('btn_alterarpw').classList.remove('hidden');
                             document.getElementById('searchbar').classList.add('d-flex');
                             document.getElementById('searchbar').classList.remove('hidden');
                             document.getElementById('logoutbutton').classList.remove('hidden');
@@ -40,44 +43,58 @@ namespace ColecaoNumismatica
                 if (isAdmin == "Yes")
                 {
                     string script3 = @"
-                            document.getElementById('btn_insertNewCoin').classList.remove('hidden');
-                            document.getElementById('btn_manageCoins').classList.remove('hidden');
-                            document.getElementById('btn_manageUsers').classList.remove('hidden');
-                            document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                             document.getElementById('btn_manageCoins').classList.remove('hidden');
+                             document.getElementById('btn_manageUsers').classList.remove('hidden');
+                             document.getElementById('btn_statistics').classList.remove('hidden');
+                             document.getElementById('btn_registerNewUser').classList.remove('hidden');";
 
                     Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script3, true);
                 }
 
-                List<Money> LstMoney = new List<Money>();
-
-                string query = "SELECT NCM.CodMN,NCM.Titulo, NCM.ValorCunho, NCI.Imagem FROM NumiCoinMoney AS NCM LEFT JOIN( SELECT NCI2.CodMN, NCI2.Imagem FROM (SELECT CodMN, MIN(CodImagem) AS FirstImage FROM NumiCoinMNImage GROUP BY CodMN) AS NCI JOIN NumiCoinMNImage AS NCI2 ON NCI.FirstImage = NCI2.CodImagem) AS NCI ON NCM.CodMN = NCI.CodMN;";
-
-                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
-                SqlCommand myCommand = new SqlCommand(query, myCon);
-                myCon.Open();
-
-                SqlDataReader dr = myCommand.ExecuteReader();
-
-                while (dr.Read())
+                if (!Page.IsPostBack)
                 {
-                    Money record = new Money();
-                    record.cod = Convert.ToInt32(dr["CodMN"]);
-                    record.titulo = dr["Titulo"].ToString();
-                    record.valorCunho = Convert.ToDecimal(dr["ValorCunho"]);
-                    record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
-                    LstMoney.Add(record);
+                    ddl_preco.Items.Insert(0, new ListItem("Todos", "0"));
+                    ddl_tipo.Items.Insert(0, new ListItem("Todos", "0"));
                 }
 
-                myCon.Close();
-                rpt_mainpage.DataSource = LstMoney;
-                rpt_mainpage.DataBind();
+                if (ddl_preco.SelectedIndex == 0 && ddl_tipo.SelectedIndex == 0)
+                {
+                    query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.ValorAtual, NCI.Imagem FROM NumiCoinMoney AS NCM OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN; ";
+                    Listar(query);
+                }
+                else if (ddl_preco.SelectedIndex == 1 && ddl_tipo.SelectedIndex == 0)
+                {
+                    query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.ValorAtual, NCI.Imagem FROM NumiCoinMoney AS NCM OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN ORDER BY NCS.ValorAtual ASC;";
+                    Listar(query);
+                }
+                else if (ddl_preco.SelectedIndex == 2 && ddl_tipo.SelectedIndex == 0)
+                {
+                    query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.ValorAtual, NCI.Imagem FROM NumiCoinMoney AS NCM OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN ORDER BY NCS.ValorAtual DESC;";
+                    Listar(query);
+                }
+                else if (ddl_preco.SelectedIndex == 0 && ddl_tipo.SelectedIndex != 0)
+                {
+                    query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.ValorAtual, NCI.Imagem FROM NumiCoinMoney AS NCM OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN WHERE CodTipoMN={ddl_tipo.SelectedValue};";
+                    Listar(query);
+                }
+                else if (ddl_preco.SelectedIndex == 1 && ddl_tipo.SelectedIndex != 0)
+                {
+                    query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.ValorAtual, NCI.Imagem FROM NumiCoinMoney AS NCM OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN WHERE CodTipoMN={ddl_tipo.SelectedValue} ORDER BY NCS.ValorAtual ASC;";
+                    Listar(query);
+                }
+                else if (ddl_preco.SelectedIndex == 2 && ddl_tipo.SelectedIndex != 0)
+                {
+                    query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.ValorAtual, NCI.Imagem FROM NumiCoinMoney AS NCM OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN WHERE CodTipoMN={ddl_tipo.SelectedValue} ORDER BY NCS.ValorAtual DESC;";
+                    Listar(query);
+                }
+
+
             }
         }
 
-
         protected void rpt_mainpage_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            //// Get the index of the item where the command was triggered
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
             SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
             myCommand.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
@@ -107,107 +124,131 @@ namespace ColecaoNumismatica
             int AnswCodCollection = Convert.ToInt32(myCommand.Parameters["@CodCollection"].Value);
             int AnswUserHasCollection = Convert.ToInt32(myCommand.Parameters["@UserHasCollection"].Value);
 
-            if (e.CommandName.Equals("like"))
+            Session["AnswCodCollection"] = AnswCodCollection;
+            Session["AnswUserHasCollection"] = AnswUserHasCollection;
+
+            if (e.CommandName.Equals("like") || e.CommandName.Equals("dislike"))
             {
                 string modalScript = @"$('#exampleModal').modal('show');";
 
                 //Register script to show the modal
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "exampleModalScript", modalScript, true);
-                Session["ModalOpened"] = true;
+                Session["ModalCommand"] = e.CommandName;
+                Session["ItemID"] = e.CommandArgument;
             }
-            if (Session["ModalOpened"] != null && (bool)Session["ModalOpened"])
+        }
+
+        protected void Listar(string query)
+        {
+            List<Money> LstMoney = new List<Money>();
+
+            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
+            SqlCommand myCommand = new SqlCommand(query, myCon);
+            myCon.Open();
+
+            SqlDataReader dr = myCommand.ExecuteReader();
+
+            while (dr.Read())
             {
-                if (Session["AddClicked"] != null && (bool)Session["AddClicked"])
-                {
-                    //((LinkButton)e.Item.FindControl("lbtn_like")).CommandArgument = e.CommandArgument.ToString();
-                    SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
-                    myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
-                    myCommand2.Parameters.AddWithValue("@CodMN", e.CommandArgument);
-                    myCommand2.Parameters.AddWithValue("@CodCollection", AnswCodCollection);
-                    myCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
-                    myCommand2.Parameters.AddWithValue("@Quantidade", tb_quantidade.Text);
-
-                    myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                    myCommand2.CommandText = "NumiCollectionAdd"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                    myCommand2.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-                    myCon.Open(); //Abrir a conexão
-                    myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-                    myCon.Close();
-
-                    Session["AddClicked"] = false;
-
-                    Session["ModalOpened"] = false;
-
-                    if (AnswUserHasCollection == 0)
-                    {
-                        lbl_message.Text = "Criada a sua coleção! Continue a adicionar items!";
-                    }
-                }
+                Money record = new Money();
+                record.cod = Convert.ToInt32(dr["CodMN"]);
+                record.titulo = dr["Titulo"].ToString();
+                record.valorCunho = Convert.ToDecimal(dr["ValorCunho"]);
+                record.valorAtual = Convert.ToDecimal(dr["ValorAtual"]);
+                record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
+                LstMoney.Add(record);
             }
 
-            if (e.CommandName.Equals("dislike"))
-            {
-                string modalScript = @"$('#exampleModal').modal('show');";
-
-                //Register script to show the modal
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "exampleModalScript", modalScript, true);
-                Session["ModalOpened"] = true;
-            }
-            if (Session["ModalOpened"] != null && (bool)Session["ModalOpened"])
-            {
-                if (Session["RemoveClicked"] != null && (bool)Session["RemoveClicked"])
-                {
-                    SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
-                    myCommand2.Parameters.AddWithValue("@CodMN", e.CommandArgument);
-                    myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
-                    myCommand2.Parameters.AddWithValue("@CodCollection", AnswCodCollection);
-                    myCommand2.Parameters.AddWithValue("@Quantidade", tb_quantidade.Text);
-
-                    SqlParameter UserDoesnHaveCoin = new SqlParameter();
-                    UserDoesnHaveCoin.ParameterName = "@UserDoesntHaveCoin";
-                    UserDoesnHaveCoin.Direction = ParameterDirection.Output;
-                    UserDoesnHaveCoin.SqlDbType = SqlDbType.Int;
-
-                    myCommand2.Parameters.Add(UserDoesnHaveCoin);
-
-                    myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                    myCommand2.CommandText = "NumiCollectionRemove"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                    myCommand2.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-                    myCon.Open(); //Abrir a conexão
-                    myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-                    myCon.Close();
-
-                    int AnswUserDoesntHaveCoin = Convert.ToInt32(myCommand2.Parameters["@UserDoesntHaveCoin"].Value);
-
-                    Session["AnswUserDoesntHaveCoin"] = AnswUserDoesntHaveCoin;
-                }
-            }
+            myCon.Close();
+            rpt_mainpage.DataSource = LstMoney;
+            rpt_mainpage.DataBind();
         }
 
         protected void btn_add_Click(object sender, EventArgs e)
         {
-            Session["AddClicked"] = true;
+            if (Session["ModalCommand"] != null && Session["ModalCommand"].ToString() == "like")
+            {
+                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
 
-            string script = @"
-                                    document.getElementById('messageAR').classList.remove('hidden');
-                                    document.getElementById('messageAR').classList.add('added');
-                                    document.getElementById('like').style.color = 'red';
-                                ";
+                int itemID = Convert.ToInt32(Session["ItemID"]);
 
-            Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
+                SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
+                myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+                myCommand2.Parameters.AddWithValue("@CodMN", itemID);
+                myCommand2.Parameters.AddWithValue("@CodCollection", Session["AnswCodCollection"]);
+                myCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
+                myCommand2.Parameters.AddWithValue("@Quantidade", tb_quantidade.Text);
 
-            lbl_message.Text = "Adicionado à sua coleção.";
+                myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                myCommand2.CommandText = "NumiCollectionAdd"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                myCommand2.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                myCon.Open(); //Abrir a conexão
+                myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+                myCon.Close();
+
+
+                //var linkButton = rpt_mainpage.Items.Cast<RepeaterItem>()
+                //                             .Where(item => item.FindControl("ltbn_like") != null && (item.FindControl("ltbn_like") as LinkButton).CommandArgument.ToString() == itemID.ToString())
+                //                             .Select(item => item.FindControl("ltbn_like") as LinkButton)
+                //                             .FirstOrDefault();
+                //if (linkButton != null)
+                //{
+                //    linkButton.ForeColor = System.Drawing.Color.Red; // Change color to red
+                //}
+
+                string script = @"
+                                var itemID = '" + Session["ItemID"].ToString() + @"';
+                                document.getElementById('messageAR').classList.remove('hidden');
+                                document.getElementById('messageAR').classList.add('removed');
+
+                                var like = document.getElementById('like_' + itemID);
+                                if (like) {
+                                    like.style.color = 'red';
+                                }
+                            ";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike_" + Session["ItemID"].ToString(), script, true);
+
+                if (Session["AnswUserHasCollection"] != null)
+                {
+                    if (Convert.ToInt32(Session["AnswUserHasCollection"]) == 1)
+                        lbl_message.Text = "Adicionado à sua coleção.";
+                    if (Convert.ToInt32(Session["AnswUserHasCollection"]) == 0)
+                        lbl_message.Text = $"Coleção criada!<br /> Item adicionado à sua coleção. Continue a adicionar mais items.";
+                }
+            }
         }
-
         protected void btn_remove_Click(object sender, EventArgs e)
         {
-            Session["RemoveClicked"] = true;
-
-            if (Session["AnswUserDoesntHaveCoin"] != null)
+            if (Session["ModalCommand"] != null && Session["ModalCommand"].ToString() == "dislike")
             {
-                int AnswUserDoesntHaveCoin = Convert.ToInt32(Session["AnswUserDoesntHaveCoin"]);
+                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
+                int itemID = Convert.ToInt32(Session["ItemID"]);
+
+                SqlCommand myCommand2 = new SqlCommand(); //Novo commando SQL 
+                myCommand2.Parameters.AddWithValue("@CodMN", itemID);
+                myCommand2.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+                myCommand2.Parameters.AddWithValue("@CodCollection", Session["AnswCodCollection"]);
+                myCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
+                myCommand2.Parameters.AddWithValue("@Quantidade", tb_quantidade.Text);
+
+                SqlParameter UserDoesnHaveCoin = new SqlParameter();
+                UserDoesnHaveCoin.ParameterName = "@UserDoesntHaveCoin";
+                UserDoesnHaveCoin.Direction = ParameterDirection.Output;
+                UserDoesnHaveCoin.SqlDbType = SqlDbType.Int;
+
+                myCommand2.Parameters.Add(UserDoesnHaveCoin);
+
+                myCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                myCommand2.CommandText = "NumiCollectionRemove"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                myCommand2.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                myCon.Open(); //Abrir a conexão
+                myCommand2.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+                myCon.Close();
+
+                int AnswUserDoesntHaveCoin = Convert.ToInt32(myCommand2.Parameters["@UserDoesntHaveCoin"].Value);
 
                 if (AnswUserDoesntHaveCoin == 1)
                 {
@@ -221,7 +262,7 @@ namespace ColecaoNumismatica
 
                     lbl_message.Text = "Removido da sua coleção.";
                 }
-                else if (AnswUserDoesntHaveCoin == -1)
+                else if (AnswUserDoesntHaveCoin == -2)
                 {
                     string script = @"
                                     document.getElementById('messageAR').classList.remove('hidden');
@@ -232,7 +273,7 @@ namespace ColecaoNumismatica
 
                     lbl_message.Text = "Quantidade a remover superior à da coleção!";
                 }
-                else if (AnswUserDoesntHaveCoin == 0)
+                else if (AnswUserDoesntHaveCoin == -1)
                 {
                     string script = @"
                                     document.getElementById('messageAR').classList.remove('hidden');
@@ -243,9 +284,21 @@ namespace ColecaoNumismatica
 
                     lbl_message.Text = "Este artigo não faz parte da sua coleção!";
                 }
+                else if (AnswUserDoesntHaveCoin == 0)
+                {
+                    string script = @"
+                                    document.getElementById('messageAR').classList.remove('hidden');
+                                    document.getElementById('messageAR').classList.add('notcollected');
+                                ";
+
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "UpdateMessageAndLike", script, true);
+
+                    lbl_message.Text = "Este artigo não faz parte da sua coleção, com essas características!";
+                }
             }
         }
-
     }
+
 }
+
 

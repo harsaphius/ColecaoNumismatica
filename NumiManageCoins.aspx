@@ -23,13 +23,13 @@
                          <td>
                          <%--<script src="ckeditor/ckeditor.js"></script>--%>
                          <asp:TextBox ID="tb_descricao" runat="server" TextMode="MultiLine"/>
-                        <%-- <script type="text/javascript">
+                       <%--  <script type="text/javascript">
                              CKEDITOR.replace('<%=tb_descricao.ClientID%>'),
                              {
                                  customConfig: 'custom/editor_config.js'
                              }
                              );
-                         </script>--%></td>
+                         </script></td>--%>
                          <td><asp:DropDownList ID="ddl_estado" runat="server" DataSourceID="SQLDSEstado" DataTextField="Estado" DataValueField="CodEstado"></asp:DropDownList></td>
                          <td><asp:DropDownList ID="ddl_tipo" runat="server" DataSourceID="SQLDSTipo" DataTextField="Tipo" DataValueField="CodTipoMN"></asp:DropDownList></td>
                          <td><asp:TextBox ID="tb_valorAtual" runat="server"/></asp:TextBox></td> 
@@ -62,7 +62,7 @@
                 </table>
                 </FooterTemplate>
     </asp:Repeater>
-         <asp:SqlDataSource ID="SQLDSMoney" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodEstado=NCS.CodEstado"></asp:SqlDataSource>
+         <asp:SqlDataSource ID="SQLDSMoney" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT NCM.CodMN, NCM.Titulo, NCM.Descricao, NCS.ValorAtual, NCS.CodEstado, NCM.CodTipoMN FROM NumiCoinMoney AS NCM OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN;"></asp:SqlDataSource>
          <asp:SqlDataSource ID="SQLDSTipo" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM [NumiCoinMNType]"></asp:SqlDataSource>
          <asp:SqlDataSource ID="SQLDSEstado" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM [NumiCoinState]"></asp:SqlDataSource>
       </div>

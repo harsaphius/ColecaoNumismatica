@@ -15,15 +15,6 @@ namespace ColecaoNumismatica
     {
 
         /// <summary>
-        /// lbl_messageUser control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl_messageUser;
-
-        /// <summary>
         /// lbl_message control.
         /// </summary>
         /// <remarks>
@@ -31,6 +22,33 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lbl_message;
+
+        /// <summary>
+        /// ddl_tipo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddl_tipo;
+
+        /// <summary>
+        /// SQLDSTipo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SQLDSTipo;
+
+        /// <summary>
+        /// ddl_preco control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddl_preco;
 
         /// <summary>
         /// rpt_mainpage control.
@@ -87,12 +105,12 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.Button btn_add;
 
         /// <summary>
-        /// Button1 control.
+        /// btn_remove control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
+        protected global::System.Web.UI.WebControls.Button btn_remove;
     }
 }
