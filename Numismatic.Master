@@ -16,44 +16,52 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
-      <nav class="navbar navbar-light bg-primary">
-        <div class="container-fluid">
-            <div class="navbar">
-                <asp:LinkButton ID="btn_home" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_home_Click" CausesValidation="False">Home</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_mycollection" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_mycollection_Click" CausesValidation="False">My Collection</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_alterarpw" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_alterarpw_Click" CausesValidation="False">Alterar PW</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_insertNewCoin" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_insertNewCoin_Click" CausesValidation="False">Insert New Coin</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_manageCoins" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_manageCoins_Click" CausesValidation="False">Manage Coins</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_manageUsers" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_manageUsers_Click" CausesValidation="False">Manage Users</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_statistics" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_statistics_Click" CausesValidation="False">Statistics</asp:LinkButton>&nbsp;
-                <asp:LinkButton ID="btn_registerNewUser" runat="server" class="btn btn-light btn-sm hidden" OnClick="btn_registerNewUser_Click" CausesValidation="False">Register New User</asp:LinkButton></div>&nbsp;
-                <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+      <nav class="navbar navbar-expand-sm navbar-light bg-primary"> 
+          <a class="navbar-brand" href="#">NumiCoin</a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto bg-light">
+                   <li class="nav-item dropdown btn-sm">                
+                        <div class="nav-link dropdown-toggle" type="button" id="navBarDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Menu</div>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                <asp:LinkButton ID="btn_home" runat="server" class="dropdown-item hidden" OnClick="btn_home_Click" CausesValidation="False">Home</asp:LinkButton>
+                                <asp:LinkButton ID="btn_mycollection" runat="server" class="dropdown-item hidden" OnClick="btn_mycollection_Click" CausesValidation="False">My Collection</asp:LinkButton>
+                                <asp:LinkButton ID="btn_alterarpw" runat="server" class="dropdown-item hidden" OnClick="btn_alterarpw_Click" CausesValidation="False">Alterar PW</asp:LinkButton>
+                                <div class="dropdown-divider"></div>
+                                <asp:LinkButton ID="btn_insertNewCoin" runat="server" class="dropdown-item hidden" OnClick="btn_insertNewCoin_Click" CausesValidation="False">Insert New Coin</asp:LinkButton>
+                                <asp:LinkButton ID="btn_manageCoins" runat="server" class="dropdown-item hidden" OnClick="btn_manageCoins_Click" CausesValidation="False">Manage Coins</asp:LinkButton>
+                                <div class="dropdown-divider"></div>
+                                <asp:LinkButton ID="btn_manageUsers" runat="server" class="dropdown-item hidden" OnClick="btn_manageUsers_Click" CausesValidation="False">Manage Users</asp:LinkButton>
+                                <asp:LinkButton ID="btn_registerNewUser" runat="server" class="dropdown-item hidden" OnClick="btn_registerNewUser_Click" CausesValidation="False">Register New User</asp:LinkButton>  
+                                <asp:LinkButton ID="btn_statistics" runat="server" class="dropdown-item hidden" OnClick="btn_statistics_Click" CausesValidation="False">Statistics</asp:LinkButton>
+                                <div class="dropdown-divider"></div>
+                                <asp:LinkButton ID="btn_logout" runat="server" class="dropdown-item hidden" OnClick="btn_logout_Click" CausesValidation="False">Logout</asp:LinkButton>
+                          </div>
+                     </li>   
+                </ul>
                <!-- Message -->
-                   <div class="text-white mb-3 mb-md-0 justify-content-center labelmessage">
+                   <div class="navbar-text align-content-center">
                           <asp:Label ID="lbl_message" runat="server" Text=""></asp:Label>
                    </div>
                <!-- Message -->
                <!--Search Bar -->
        
-                <div id="searchbar" class="small hidden">
-                  <asp:TextBox ID="tb_search" class="form-control" runat="server"  placeholder="Pesquisa"></asp:TextBox> &nbsp;
-                  <asp:Button ID="btn_search" runat="server" class="btn btn-light btn-sm" Text="Pesquisar" OnClick="btn_search_Click"/>
+                <div id="searchbar" class="form-inline my-2 my-lg-0 hidden">
+                  <asp:TextBox ID="tb_search" class="form-control mr-sm-2" runat="server"  placeholder="Pesquisa"></asp:TextBox> &nbsp;
+                  <asp:Button ID="btn_search" runat="server" class="btn btn-light btn-sm my-2 my-sm-0" Text="Pesquisar" OnClick="btn_search_Click"/>
                 </div>
             
                <!--Search Bar -->
-               <!-- Logout -->
-                   <div id="logoutbutton" class="hidden">
-                      &nbsp;<asp:Button ID="btn_logout" runat="server" Text="Logout" class="btn btn-light btn-sm" OnClick="btn_logout_Click"/>
-                   </div>
-               <!-- Logout -->
-            </div>
-        </div>
+            
+            
+            </div>        
    </nav>
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
-        
-            <!--Start of Tawk.to Script-->
+    <div style="align-content:flex-end;">   
+    <!--Start of Tawk.to Script-->
         <script type="text/javascript">
             var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
             (function () {
@@ -66,7 +74,7 @@
             })();
         </script>
         <!--End of Tawk.to Script-->
-
+    </div>
             <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
    <!-- Copyright -->
        <div class="text-white mb-3 mb-md-0">
@@ -89,7 +97,7 @@
        </div>
    <!-- Right -->
    </div>
-        </div>
+
     </form>
 </body>
 </html>

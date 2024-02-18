@@ -60,6 +60,24 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.Repeater rpt_mainpage;
 
         /// <summary>
+        /// lbtn_previous control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lbtn_previous;
+
+        /// <summary>
+        /// lbtn_next control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lbtn_next;
+
+        /// <summary>
         /// ddl_estado control.
         /// </summary>
         /// <remarks>

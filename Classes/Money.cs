@@ -12,6 +12,7 @@ namespace ColecaoNumismatica
         public string tipo { get; set; }
         public string estado { get; set; }
         public string imagem { get; set; }
+        public int quantidade { get; set; }
     }
 
 }

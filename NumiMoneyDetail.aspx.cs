@@ -21,6 +21,7 @@ namespace ColecaoNumismatica
                 string user = Session["User"].ToString();
 
                 Label lblMessage = Master.FindControl("lbl_message") as Label;
+
                 if (lblMessage != null)
                 {
                     lblMessage.Text = "Bem-vindo " + user;
@@ -32,7 +33,7 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
                             document.getElementById('searchbar').classList.add('d-flex');
                             document.getElementById('searchbar').classList.remove('hidden');
-                            document.getElementById('logoutbutton').classList.remove('hidden');
+                            document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
                 Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script2, true);
@@ -92,8 +93,6 @@ namespace ColecaoNumismatica
             }
 
         }
-
-
 
         protected void btn_back_Click(object sender, EventArgs e)
         {

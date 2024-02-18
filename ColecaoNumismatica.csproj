@@ -44,7 +44,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ASPSnippets.FaceBookAPI">
-      <HintPath>..\..\..\Desktop\ASPSnippets.FaceBookAPI.dll</HintPath>
+      <HintPath>..\..\..\Desktop\Recursos NumiCoin\ASPSnippets.FaceBookAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>E:\Transf Organizar\Studies\CINEL\Recursos Para Projetos\iTextSharp\iTextSharp\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp.pdfa">
+      <HintPath>E:\Transf Organizar\Studies\CINEL\Recursos Para Projetos\iTextSharp\iTextSharp\itextsharp.pdfa.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp.xtra">
+      <HintPath>E:\Transf Organizar\Studies\CINEL\Recursos Para Projetos\iTextSharp\iTextSharp\itextsharp.xtra.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web.DynamicData" />
@@ -444,8 +453,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\FaceBookUser.cs" />
-    <Compile Include="Classes\Tokenclass.cs" />
-    <Compile Include="Classes\Userclass.cs" />
+    <Compile Include="Classes\MyFunctions.cs" />
+    <Compile Include="Classes\TokenClass.cs" />
+    <Compile Include="Classes\UserClass.cs" />
     <Compile Include="NumiAtivationPage.aspx.cs">
       <DependentUpon>NumiAtivationPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -566,7 +576,12 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pdfs\Template\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -24,6 +24,7 @@ namespace ColecaoNumismatica
                 string user = Session["User"].ToString();
 
                 Label lblMessage = Master.FindControl("lbl_message") as Label;
+
                 if (lblMessage != null)
                 {
                     lblMessage.Text = "Bem-vindo " + user;
@@ -35,7 +36,7 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
                             document.getElementById('searchbar').classList.add('d-flex');
                             document.getElementById('searchbar').classList.remove('hidden');
-                            document.getElementById('logoutbutton').classList.remove('hidden');
+                            document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
                 Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script2, true);
@@ -76,45 +77,20 @@ namespace ColecaoNumismatica
         {
             if (e.CommandName.Equals("imgBtn_grava"))
             {
-                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
-                SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
-                myCommand.Parameters.AddWithValue("@CodMN", ((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument);
-                myCommand.Parameters.AddWithValue("@Titulo", ((TextBox)e.Item.FindControl("tb_titulo")).Text);
-                myCommand.Parameters.AddWithValue("@Descricao", ((TextBox)e.Item.FindControl("tb_descricao")).Text);
-                myCommand.Parameters.AddWithValue("@CodEstado", ((DropDownList)e.Item.FindControl("ddl_estado")).SelectedValue);
-                myCommand.Parameters.AddWithValue("@CodTipoMN", ((DropDownList)e.Item.FindControl("ddl_tipo")).SelectedValue);
-                if (((TextBox)e.Item.FindControl("tb_valorAtual")).Text.Contains("."))
-                {
-                    ((TextBox)e.Item.FindControl("tb_valorAtual")).Text = ((TextBox)e.Item.FindControl("tb_valorAtual")).Text.Replace(".", ",");
-                    myCommand.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(((TextBox)e.Item.FindControl("tb_valorAtual")).Text));
-                }
-                else
-                {
-                    myCommand.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(((TextBox)e.Item.FindControl("tb_valorAtual")).Text));
-                }
+                List<string> Values = new List<string>();
+                Values.Add(((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument);
+                Values.Add(((TextBox)e.Item.FindControl("tb_titulo")).Text);
+                Values.Add(((TextBox)e.Item.FindControl("tb_descricao")).Text);
+                Values.Add(((DropDownList)e.Item.FindControl("ddl_estado")).SelectedValue);
+                Values.Add(((DropDownList)e.Item.FindControl("ddl_tipo")).SelectedValue);
+                Values.Add(((TextBox)e.Item.FindControl("tb_valorAtual")).Text);
 
-                myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                myCommand.CommandText = "NumiUpdateCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-                myCon.Open(); //Abrir a conexão
-                myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-                myCon.Close();
+                Classes.MyFunctions.SQLConnect(Values);
             }
 
             if (e.CommandName.Equals("imgBtn_apaga"))
             {
-                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
-                SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
-                myCommand.Parameters.AddWithValue("@CodMN", ((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument);
-                
-                myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                myCommand.CommandText = "NumiRemoveCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-                myCon.Open(); //Abrir a conexão
-                myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-                myCon.Close();
+                Classes.MyFunctions.SQLConnect(((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument);
 
                 rpt_manageCoins.DataBind();
             }

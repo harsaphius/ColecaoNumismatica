@@ -1,8 +1,6 @@
 ﻿<%@ Page Title="Statistics" Language="C#" MasterPageFile="~/Numismatic.Master" AutoEventWireup="true" CodeBehind="NumiStatistics.aspx.cs" Inherits="ColecaoNumismatica.NumiStatistics" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-<!-- CSS Files -->
-<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.3/components/facts/fact-3/assets/css/fact-3.css" />
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 <!-- Fact 3 - Bootstrap Brain Component -->

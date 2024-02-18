@@ -4,9 +4,11 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server"> 
 <div id="messageAR" class="hidden"><asp:Label ID="lbl_message" runat="server" Text=""></asp:Label></div>
 
-<div class="form-control-inline" style="padding:5px;"><asp:DropDownList ID="ddl_tipo" runat="server" DataSourceID="SQLDSTipo" DataTextField="Tipo" DataValueField="CodTipoMN" AutoPostBack="true" AppendDataBoundItems="true"></asp:DropDownList>
+<div class="form-control-sm" style="padding:5px;justify-content:center;width:fit-content;height:fit-content;">
+    <asp:DropDownList ID="ddl_tipo" runat="server" DataSourceID="SQLDSTipo" DataTextField="Tipo" DataValueField="CodTipoMN" AutoPostBack="true" AppendDataBoundItems="true"></asp:DropDownList>
     <asp:SqlDataSource ID="SQLDSTipo" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM [NumiCoinMNType]"></asp:SqlDataSource>
-    &nbsp;&nbsp;<asp:DropDownList ID="ddl_preco" runat="server" AutoPostBack="True">
+    &nbsp;&nbsp;
+    <asp:DropDownList ID="ddl_preco" runat="server" AutoPostBack="True">
         <asp:ListItem Value="Preço Ascendente"></asp:ListItem>
         <asp:ListItem Value="Preço Descendente"></asp:ListItem>
     </asp:DropDownList></div>
@@ -17,7 +19,7 @@
                         <div class="row">
         </HeaderTemplate>
         <ItemTemplate>
-            <div class="col-lg-3 col-sm-6 card" style="background-color:powderblue; height:250px; padding:15px; margin:2px;text-align:center">
+            <div class="col-lg-3 col-md-4 col-sm-6 card" style="background-color:powderblue; height:280px; padding:10px; margin:1px;text-align:center">
                       <div><b><asp:LinkButton href='<%# "NumiMoneyDetail.aspx?id=" + Eval("cod") %>' ID="lbl_titulo" runat="server" Text=""><%# Eval("titulo") %></asp:LinkButton> </b></div><br />
                       <div style="padding:5px;"><img src="<%# Eval("imagem") %>" style="width:150px;height:150px;"><br /></div> 
                       <div>
@@ -27,7 +29,7 @@
             </div>
         </ItemTemplate>
         <AlternatingItemTemplate>
-            <div class="col-lg-3 col-sm-6 card" style="background-color:ghostwhite; height:250px; padding:15px; margin:2px;text-align:center">
+            <div class="col-lg-3 col-sm-6 card" style="background-color:ghostwhite; height:280px; padding:10px; margin:1px;text-align:center">
                      <div><b><asp:LinkButton href='<%# "NumiMoneyDetail.aspx?id=" + Eval("cod") %>' ID="lbl_titulo" runat="server" Text=""><%# Eval("titulo") %></asp:LinkButton> </b></div><br />
                       <div style="padding:5px;"><img src="<%# Eval("imagem") %>" style="width:150px;height:150px;"><br /></div>
                       <div>
@@ -36,13 +38,18 @@
                       </div>
             </div>
         </AlternatingItemTemplate>
-        <FooterTemplate>
+        <FooterTemplate>    
+           
                         </div>
               </div>
-        </FooterTemplate>
+        </FooterTemplate>  
     </asp:Repeater>
-
 </div>
+    <div style="display:flex; justify-content:center;">
+    <asp:LinkButton ID="lbtn_previous" runat="server" OnClick="lbtn_previous_Click">Previous</asp:LinkButton>&nbsp;
+            <asp:LinkButton ID="lbtn_next" runat="server" OnClick="lbtn_next_Click">Next</asp:LinkButton>
+
+    </div>
 
 <!--Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
@@ -61,7 +68,7 @@
              <asp:DropDownList ID="ddl_estado" runat="server" DataSourceID="SQLDStateMN" DataTextField="Estado" DataValueField="CodEstado"></asp:DropDownList>
              <asp:SqlDataSource ID="SQLDStateMN" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM [NumiCoinState] ORDER BY CodEstado"></asp:SqlDataSource>
              <br />
-             <label for="tb_quantidade" class="col-form-label">Estado:</label>
+             <label for="tb_quantidade" class="col-form-label">Quantidade:</label>
              <asp:TextBox ID="tb_quantidade" runat="server" CssClass="form-control" TextMode="Number"></asp:TextBox>
          </div>
         </div>

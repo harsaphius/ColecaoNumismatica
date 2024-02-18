@@ -23,6 +23,7 @@ namespace ColecaoNumismatica
                 string user = Session["User"].ToString();
 
                 Label lblMessage = Master.FindControl("lbl_message") as Label;
+
                 if (lblMessage != null)
                 {
                     lblMessage.Text = "Bem-vindo " + user;
@@ -34,7 +35,7 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
                             document.getElementById('searchbar').classList.add('d-flex');
                             document.getElementById('searchbar').classList.remove('hidden');
-                            document.getElementById('logoutbutton').classList.remove('hidden');
+                            document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
                 Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script2, true);
@@ -72,7 +73,6 @@ namespace ColecaoNumismatica
                 myCommand.Parameters.AddWithValue("@ValorCunho", Convert.ToDecimal(tb_valorCunho.Text));
             }
             
-
             //Devolver o código da moeda/nota
             SqlParameter CodMN = new SqlParameter();
             CodMN.ParameterName = "@CodMN";
@@ -91,7 +91,6 @@ namespace ColecaoNumismatica
             int AnswCodMN = Convert.ToInt32(myCommand.Parameters["@CodMN"].Value);
 
             //Insert Coin State
-
             SqlCommand sqlCommand2 = new SqlCommand();
 
             sqlCommand2.Connection = myCon;

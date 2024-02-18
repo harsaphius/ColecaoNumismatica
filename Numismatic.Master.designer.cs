@@ -87,6 +87,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.LinkButton btn_manageUsers;
 
         /// <summary>
+        /// btn_registerNewUser control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btn_registerNewUser;
+
+        /// <summary>
         /// btn_statistics control.
         /// </summary>
         /// <remarks>
@@ -96,13 +105,13 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.LinkButton btn_statistics;
 
         /// <summary>
-        /// btn_registerNewUser control.
+        /// btn_logout control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btn_registerNewUser;
+        protected global::System.Web.UI.WebControls.LinkButton btn_logout;
 
         /// <summary>
         /// lbl_message control.
@@ -130,15 +139,6 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btn_search;
-
-        /// <summary>
-        /// btn_logout control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn_logout;
 
         /// <summary>
         /// ContentPlaceHolder1 control.

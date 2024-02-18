@@ -1,17 +1,10 @@
 ﻿* {
+
 }
 
 body {
     margin: 10px;
     padding: 10px;
-}
-
-.navbar {
-    /*width: 100%;*/
-    /*background-color: #555;*/
-    justify-content: center;
-    display: flex;
-    overflow: auto;
 }
 
 
@@ -28,7 +21,7 @@ body {
     height: calc(100% - 73px);
 }
 
-@media (max-width: 450px) {
+@media (max-width: 550px) {
     .h-custom {
         height: 100%;
     }
@@ -60,7 +53,6 @@ body {
     border-top: 0px;
 }
 
-
 /*Esconder Divs*/
 .hidden {
     display: none;
@@ -72,16 +64,11 @@ body {
 
 
 /*FontAwesome Icon Button*/
-.fa-icon-button {
+/*.fa-icon-button {
     background-color: transparent;
     border: none;
     cursor: pointer;
-}
-
-.labelmessage {
-    color: white;
-    border: inset;
-}
+}*/
 
 .added {
     color:green;

@@ -1,6 +1,6 @@
 ﻿namespace ColecaoNumismatica.Classes
 {
-    public class Tokenclass
+    public class TokenClass
     {
         public string access_token
         {

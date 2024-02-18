@@ -1,6 +1,6 @@
 ﻿namespace ColecaoNumismatica.Classes
 {
-    public class Userclass
+    public class UserClass
     {
         public string id
         {
