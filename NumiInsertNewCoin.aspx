@@ -29,16 +29,7 @@
   <div class="form-row">   
       <div class="form-group col-md-12">
         <label for="tb_descricao">Descrição</label>
-          <script src="ckeditor/ckeditor.js"></script>
-          <asp:TextBox ID="tb_descricao" runat="server" class="form-control" placeholder="Descrição da moeda ou nota" TextMode="MultiLine"></asp:TextBox>     
-           <script type="text/javascript">
-            CKEDITOR.replace('<%=tb_descricao.ClientID%>',
-            {
-                customConfig:'custom/editor_config.js'
-
-            }
-            );
-            </script>
+          <asp:TextBox ID="tb_descricao" runat="server" class="form-control" placeholder="Descrição da moeda ou nota" TextMode="MultiLine"></asp:TextBox>      
       </div>
   </div>
      <!-- Row for Valor Cunho | Valor Atual | Imagens da Nota | Moeda -->

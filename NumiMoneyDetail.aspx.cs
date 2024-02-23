@@ -11,6 +11,8 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            string script;
+
             if (Session["Logado"] == null)
             {
                 Response.Redirect("NumiLoginUser.aspx");
@@ -27,7 +29,8 @@ namespace ColecaoNumismatica
                     lblMessage.Text = "Bem-vindo " + user;
                 }
 
-                string script2 = @"
+                script = @"
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
@@ -36,36 +39,35 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script2, true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
 
                 if (isAdmin == "Yes")
                 {
-                    string script3 = @"
-                              document.getElementById('btn_insertNewCoin').classList.remove('hidden');
-                              document.getElementById('btn_manageCoins').classList.remove('hidden');
-                              document.getElementById('btn_manageUsers').classList.remove('hidden');
-                              document.getElementById('btn_statistics').classList.remove('hidden');
-                              document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+                    script = @"
+                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                             document.getElementById('divider1').classList.remove('hidden');
+                             document.getElementById('divider2').classList.remove('hidden');
+                             document.getElementById('divider3').classList.remove('hidden');
+                             document.getElementById('btn_manageCoins').classList.remove('hidden');
+                             document.getElementById('btn_manageUsers').classList.remove('hidden');
+                             document.getElementById('btn_statistics').classList.remove('hidden');
+                             document.getElementById('btn_registerNewUser').classList.remove('hidden');";
 
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script3, true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
                 }
             }
 
             List<Money> LstMoney = new List<Money>();
 
-            string query = $"SELECT NC.[CodMN], NC.[Titulo], NC.[Descricao], NS.[Estado], NC.[ValorCunho], NSMN.[ValorAtual], NCI.[Imagem], NCT.[Tipo] AS [Tipo] FROM[dbo].[NumiCoinMoney] NC INNER JOIN[dbo].[NumiCoinStateMN] NSMN ON NC.[CodMN] = NSMN.[CodMN]INNER JOIN[dbo].[NumiCoinState] NS ON NSMN.[CodEstado] = NS.[CodEstado] INNER JOIN[dbo].[NumiCoinMNImage] NCI ON NC.[CodMN] = NCI.[CodMN] INNER JOIN[dbo].[NumiCoinMNType] NCT ON NC.[CodTipoMN] = NCT.[CodTipoMN] WHERE NC.[CodMN] = { Request.QueryString["id"]}; ";
+            string query = $"SELECT NC.[CodMN], NC.[Titulo], NC.[Descricao], NS.[Estado], NC.[ValorCunho], NSMN.[ValorAtual], NCI.[Imagem], NCT.[Tipo] AS [Tipo] FROM[dbo].[NumiCoinMoney] NC INNER JOIN[dbo].[NumiCoinStateMN] NSMN ON NC.[CodMN] = NSMN.[CodMN]INNER JOIN[dbo].[NumiCoinState] NS ON NSMN.[CodEstado] = NS.[CodEstado] INNER JOIN[dbo].[NumiCoinMNImage] NCI ON NC.[CodMN] = NCI.[CodMN] INNER JOIN[dbo].[NumiCoinMNType] NCT ON NC.[CodTipoMN] = NCT.[CodTipoMN] WHERE NC.[CodMN] = {Request.QueryString["id"]} AND NS.[Estado] = '{Request.QueryString["estado"]}' ";
 
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
-
             SqlCommand myCommand = new SqlCommand(query, myCon);
-
             myCon.Open();
 
             SqlDataReader dr = myCommand.ExecuteReader();
-
             while (dr.Read())
             {
-
                 lbl_titulo.Text = dr["Titulo"].ToString();
                 lt_descricao.Text = dr["Descricao"].ToString();
                 lbl_estado.Text = dr["Estado"].ToString();

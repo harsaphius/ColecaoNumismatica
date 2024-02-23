@@ -14,7 +14,7 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'forms' },
 		{ name: 'basicstyles', groups: ['basicstyles', 'cleanup'] },
 		{ name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align', 'bidi'] },
-        { name: 'paragraph', groups: ['list', 'indent', 'align'] }
+        { name: 'paragraph', groups: ['list', 'indent', 'align'] },
 		{ name: 'links' },
 		{ name: 'insert' },
 		{ name: 'styles' },

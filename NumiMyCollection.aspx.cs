@@ -1,7 +1,9 @@
-﻿using iTextSharp.text.pdf;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Web.UI;
@@ -13,6 +15,8 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            string script;
+
             if (Session["Logado"] == null)
             {
                 Response.Redirect("NumiLoginUser.aspx");
@@ -28,7 +32,8 @@ namespace ColecaoNumismatica
                     lblMessage.Text = "Bem-vindo " + user;
                 }
 
-                string script2 = @"
+                script = @"
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
@@ -37,24 +42,197 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script2, true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
 
                 if (isAdmin == "Yes")
                 {
-                    string script3 = @"
-                              document.getElementById('btn_insertNewCoin').classList.remove('hidden');
-                              document.getElementById('btn_manageCoins').classList.remove('hidden');
-                              document.getElementById('btn_manageUsers').classList.remove('hidden');
-                              document.getElementById('btn_statistics').classList.remove('hidden');
-                              document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+                    script = @"
+                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                             document.getElementById('divider1').classList.remove('hidden');
+                             document.getElementById('divider2').classList.remove('hidden');
+                             document.getElementById('divider3').classList.remove('hidden');
+                             document.getElementById('btn_manageCoins').classList.remove('hidden');
+                             document.getElementById('btn_manageUsers').classList.remove('hidden');
+                             document.getElementById('btn_statistics').classList.remove('hidden');
+                             document.getElementById('btn_registerNewUser').classList.remove('hidden');";
 
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script3, true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
                 }
+
             }
 
+            List<Money> LstMoney;
+
+            LstMoney = MyCollection();
+
+            rpt_mycollection.DataSource = LstMoney;
+            rpt_mycollection.DataBind();
+        }
+
+        protected void rpt_mycollection_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName.Equals("lbtn_plus"))
+            {
+                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
+
+                SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
+                myCommand.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+                myCommand.Parameters.AddWithValue("@CodMN", ((LinkButton)e.Item.FindControl("lbtn_plus")).CommandArgument);
+                myCommand.Parameters.AddWithValue("@CodEstado", ((DropDownList)e.Item.FindControl("ddl_estado")).SelectedValue);
+                int Quant;
+                if (int.TryParse(((Label)e.Item.FindControl("lbl_quantidade")).Text, out Quant))
+                {
+                    Quant++;
+                }
+                myCommand.Parameters.AddWithValue("@Quantidade", Quant);
+
+                myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                myCommand.CommandText = "NumiCollectionMore"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                myCon.Open(); //Abrir a conexão
+                myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+                myCon.Close();
+
+                rpt_mycollection.DataBind();
+            }
+
+            if (e.CommandName.Equals("lbtn_minus"))
+            {
+                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
+
+                SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
+                myCommand.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
+                myCommand.Parameters.AddWithValue("@CodMN", ((LinkButton)e.Item.FindControl("lbtn_plus")).CommandArgument);
+                myCommand.Parameters.AddWithValue("@CodEstado", ((DropDownList)e.Item.FindControl("ddl_estado")).SelectedValue);
+                int Quant;
+
+                if (int.TryParse(((Label)e.Item.FindControl("lbl_quantidade")).Text, out Quant))
+                {
+                    Quant--;
+                }
+
+                myCommand.Parameters.AddWithValue("@Quantidade", Quant);
+
+                SqlParameter UserDoesnHaveCoin = new SqlParameter();
+                UserDoesnHaveCoin.ParameterName = "@UserDoesntHaveCoin";
+                UserDoesnHaveCoin.Direction = ParameterDirection.Output;
+                UserDoesnHaveCoin.SqlDbType = SqlDbType.Int;
+
+                myCommand.Parameters.Add(UserDoesnHaveCoin);
+
+                myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                myCommand.CommandText = "NumiCollectionLess"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                myCon.Open(); //Abrir a conexão
+                myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+                myCon.Close();
+
+                rpt_mycollection.DataBind();
+            }
+        }
+
+        protected void btn_export_Click(object sender, EventArgs e)
+        {
+            List<Money> money;
+
+            if (Session["User"] != null)
+            {
+                money = MyCollection();
+                List<string> pdfFiles = new List<string>();
+                string pathPDFs = ConfigurationManager.AppSettings["PathPDFs"];  //Caminho dos PDFs colocado no WebConfig de modo a ser facilmente acessado e modificado
+
+                string pdfTemplate = pathPDFs + "Template\\NumiCoinPdf_Template.pdf"; //Caminho final do template
+                string pathTemps = pathPDFs + $"Temps\\";
+                //string pathFinal = pathPDFs + $"Gerados\\Collection_{Session["User"]}";
+
+                int num = 1;
+
+                foreach (Money m in money)
+                {
+                    string nomePDF = Classes.MyFunctions.EncryptString(num.ToString()) + ".pdf"; //Gera o nome do pdf através da encriptação da data e hora do dia em que o pdf foi criado - encriptação MD5
+
+                    string novoFile = pathPDFs + "Temps\\" + nomePDF;
+
+                    PdfReader pdfReader = new PdfReader(pdfTemplate); //Instancia pdfReader para ler o pdfTemplate
+                    PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileStream(novoFile, FileMode.Create)); //Instancia o pdfStamper para ir buscar o ficheiro pdfTemplate de modo a que o AcroFields (a seguir) possa preencher os campos assinalados num novoFile
+
+                    AcroFields pdfFields = pdfStamper.AcroFields; //Encontra os AcroFields no pdfStamper
+                    pdfFields.SetField("tb_user", Session["User"].ToString()); //Escreve no novoFile no campo do pdf nome o texto da tb_nome
+                    pdfFields.SetField("tb_codMN", m.cod.ToString());
+                    pdfFields.SetField("tb_collection", m.codC.ToString());
+                    pdfFields.SetField("tb_titulo", m.titulo);
+                    pdfFields.SetField("tb_tipo", m.tipo);
+                    pdfFields.SetField("tb_estado", m.estado);
+                    pdfFields.SetField("tb_valorCunho", m.valorCunho.ToString());
+                    pdfFields.SetField("tb_valorAtual", m.valorAtual.ToString());
+                    pdfFields.SetField("tb_quantidade", m.quantidade.ToString());
+
+                    byte[] imageData = Convert.FromBase64String(m.imagemC);
+
+                    iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageData);
+
+                    // Scale the image if necessary
+                    image.ScaleToFit(100f, 100f); // Adjust width and height as needed
+
+                    image.SetAbsolutePosition(100, 250);
+                    // Add the image to the document
+                    PdfContentByte pdfContentByte = pdfStamper.GetOverContent(1); // Page number to add the image to
+                    pdfContentByte.AddImage(image);
+
+                    pdfStamper.Close(); //Fecha o pdfStamper
+                    pdfFiles.Add(novoFile);
+                    num++;
+                }
+
+                byte[] mergedPdf = MergePdfFilesInFolder(pathTemps);
+
+                // Now you can do something with the merged PDF, like saving to a file or sending to the client
+                // For example, you can save it to a file
+                string outputPath = Path.Combine(Server.MapPath("~"), "Pdfs\\Gerados", "merged.pdf");
+                File.WriteAllBytes(outputPath, mergedPdf);
+
+            }
+        }
+
+        public byte[] MergePdfFilesInFolder(string folderPath)
+        {
+            // Get a list of PDF files in the folder
+            string[] pdfFiles = Directory.GetFiles(folderPath, "*.pdf");
+
+            // Create a MemoryStream to hold the merged PDF
+            using (MemoryStream ms = new MemoryStream())
+            {
+                // Create a Document and PdfCopy instance
+                using (Document document = new Document())
+                using (PdfSmartCopy copy = new PdfSmartCopy(document, ms))
+                {
+                    document.Open();
+
+                    foreach (string pdfFile in pdfFiles)
+                    {
+                        // Add each PDF file to the merged PDF
+                        using (PdfReader reader = new PdfReader(pdfFile))
+                        {
+                            for (int i = 1; i <= reader.NumberOfPages; i++)
+                            {
+                                copy.AddPage(copy.GetImportedPage(reader, i));
+                            }
+                        }
+                    }
+                }
+
+                // Return the merged PDF as a byte array
+                return ms.ToArray();
+            }
+        }
+
+        protected List<Money> MyCollection()
+        {
             List<Money> LstMoney = new List<Money>();
 
-            string query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.ValorAtual, NCI.Imagem, NCS.CodEstado, NCM.CodTipoMN, NCC.Quantidade FROM NumiCoinMoney AS NCM OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN LEFT JOIN NumiCoinCollection AS NCC ON NCM.CodMN=NCC.CodMN WHERE CodUtilizador={Session["CodUtilizador"]};";
+            string query = $"SELECT NCC.CodMN, NCC.CodCollection, NCI.Imagem, NCC.CodEstado, NCM.Titulo,  NCM.ValorCunho, (SELECT TOP 1 Estado FROM NumiCoinState WHERE CodEstado = NCC.CodEstado) AS Estado, (SELECT TOP 1 ValorAtual FROM NumiCoinStateMN WHERE CodMN = NCM.CodMN) AS ValorAtual, NCMT.Tipo,NCC.Quantidade FROM  NumiCoinCollection AS NCC INNER JOIN  NumiCoinMoney AS NCM ON NCC.CodMN = NCM.CodMN INNER JOIN  NumiCoinMNType AS NCMT ON NCM.CodTipoMN = NCMT.CodTipoMN OUTER APPLY (SELECT TOP 1 Imagem FROM NumiCoinMNImage WHERE CodMN = NCC.CodMN ORDER BY CodImagem) AS NCI WHERE NCC.CodUtilizador={Session["CodUtilizador"]};";
 
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
             SqlCommand myCommand = new SqlCommand(query, myCon);
@@ -66,40 +244,23 @@ namespace ColecaoNumismatica
             {
                 Money record = new Money();
                 record.cod = Convert.ToInt32(dr["CodMN"]);
+                record.codC = Convert.ToInt32(dr["CodCollection"]);
                 record.titulo = dr["Titulo"].ToString();
-                record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
+                record.tipo = dr["Tipo"].ToString();
+                record.estado = dr["Estado"].ToString();
+                record.valorCunho = dr["ValorCunho"].ToString();
                 record.valorAtual = Convert.ToDecimal(dr["ValorAtual"]);
-                record.estado = dr["CodEstado"].ToString();
                 record.quantidade = Convert.ToInt32(dr["Quantidade"]);
+                record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
+                record.imagemC = Convert.ToBase64String((byte[])dr["Imagem"]);
                 LstMoney.Add(record);
             }
 
             myCon.Close();
 
-            rpt_mycollection.DataSource = LstMoney;
-            rpt_mycollection.DataBind();
-        }
+            return LstMoney;
 
-        protected void btn_export_Click(object sender, EventArgs e)
-        {
-            string pathPDFs = ConfigurationManager.AppSettings["PathPDFs"];  //Caminho dos PDFs colocado no WebConfig de modo a ser facilmente acessado e modificado
-
-            string siteURL = ConfigurationManager.AppSettings["SiteURL"]; //Caminho do URL colocado no WebConfig de modo a ser facilmente acessado e modificado
-
-            string pdfTemplate = pathPDFs + "template\\cartao_template.pdf"; //Caminho final do template
-
-            string nomePDF = Classes.MyFunctions.EncryptString(DateTime.Now.ToString().Replace("/", "").Replace(" ", "").Replace(":", "")) + ".pdf"; //Gera o nome do pdf através da encriptação da data e hora do dia em que o pdf foi criado - encriptação MD5
-
-            string novoFile = pathPDFs + "gerados\\" + nomePDF;
-
-            PdfReader pdfReader = new PdfReader(pdfTemplate); //Instancia pdfReader para ler o pdfTemplate
-            PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileStream(novoFile, FileMode.Create)); //Instancia o pdfStamper para ir buscar o ficheiro pdfTemplate de modo a que o AcroFields (a seguir) possa preencher os campos assinalados num novoFile
-
-            AcroFields pdfFields = pdfStamper.AcroFields; //Encontra os AcroFields no pdfStamper
-            pdfFields.SetField("tb_name", tb_nome.Text); //Escreve no novoFile no campo do pdf nome o texto da tb_nome
-            pdfFields.SetField("tb_nr", myCommand.Parameters["@Nr"].Value.ToString());
-
-            pdfStamper.Close(); //Fecha o pdfStamper
         }
     }
 }
+

@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace ColecaoNumismatica
 {
     public partial class Numismatic : System.Web.UI.MasterPage
     {
+        public event EventHandler BtnSearchInMasterPage;
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -79,39 +76,6 @@ namespace ColecaoNumismatica
             Response.Redirect("NumiManageUsers.aspx");
         }
 
-        protected void btn_search_Click(object sender, EventArgs e)
-        {
-            List<Money> LstMoney = new List<Money>();
-
-            string query = $"SELECT NCM.Titulo, NCM.ValorCunho, NCI.Imagem FROM NumiCoinMoney AS NCM LEFT JOIN(SELECT NCI2.CodMN, NCI2.Imagem FROM(SELECT CodMN, MIN(CodImagem) AS FirstImage FROM NumiCoinMNImage GROUP BY CodMN) AS NCI JOIN NumiCoinMNImage AS NCI2 ON NCI.FirstImage = NCI2.CodImagem) AS NCI ON NCM.CodMN = NCI.CodMN WHERE NCM.Titulo LIKE '%{tb_search.Text}%'";
-
-            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
-
-            SqlCommand myCommand = new SqlCommand(query, myCon);
-
-            myCon.Open();
-
-            SqlDataReader dr = myCommand.ExecuteReader();
-
-            while (dr.Read())
-            {
-                Money record = new Money();
-                record.titulo = dr["Titulo"].ToString();
-                record.valorCunho = Convert.ToDecimal(dr["ValorCunho"]);
-                record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
-                LstMoney.Add(record);
-            }
-
-            myCon.Close();
-
-            Repeater repeaterControl = (Repeater)ContentPlaceHolder1.FindControl("rpt_mainpage");
-            if (repeaterControl != null)
-            {
-                repeaterControl.DataSource = LstMoney; // Replace GetDataSource() with your actual data source
-                repeaterControl.DataBind();
-            }
-        }
-
         protected void btn_mycollection_Click(object sender, EventArgs e)
         {
             Response.Redirect("NumiMyCollection.aspx");
@@ -130,6 +94,11 @@ namespace ColecaoNumismatica
         protected void btn_statistics_Click(object sender, EventArgs e)
         {
             Response.Redirect("NumiStatistics.aspx");
+        }
+
+        protected void btn_search_Click(object sender, EventArgs e)
+        {
+            BtnSearchInMasterPage?.Invoke(this, EventArgs.Empty);
         }
     }
 }

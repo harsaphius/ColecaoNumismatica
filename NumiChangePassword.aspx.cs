@@ -11,14 +11,11 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            string script;
+
             if (Session["Logado"] == null)
             {
-            //if (Request.QueryString["redirected"] != null && Request.QueryString["redirected"] == "true")
-            //{
-            //    Response.Redirect("NumiChangePassword.aspx");
-            //}
-            //    else { 
-                Response.Redirect("NumiLoginUser.aspx");/*}*/
+                Response.Redirect("NumiLoginUser.aspx");
             }
             else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
             {
@@ -31,7 +28,8 @@ namespace ColecaoNumismatica
                     lblMessage.Text = "Bem-vindo " + user;
                 }
 
-                string script2 = @"
+                script = @"
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
@@ -40,18 +38,21 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script2, true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
 
                 if (isAdmin == "Yes")
                 {
-                    string script3 = @"
-                            document.getElementById('btn_insertNewCoin').classList.remove('hidden');
-                            document.getElementById('btn_manageCoins').classList.remove('hidden');
-                            document.getElementById('btn_manageUsers').classList.remove('hidden');
-                            document.getElementById('btn_statistics').classList.remove('hidden');
-                            document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+                    script = @"
+                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                             document.getElementById('divider1').classList.remove('hidden');
+                             document.getElementById('divider2').classList.remove('hidden');
+                             document.getElementById('divider3').classList.remove('hidden');
+                             document.getElementById('btn_manageCoins').classList.remove('hidden');
+                             document.getElementById('btn_manageUsers').classList.remove('hidden');
+                             document.getElementById('btn_statistics').classList.remove('hidden');
+                             document.getElementById('btn_registerNewUser').classList.remove('hidden');";
 
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script3, true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
                 }
             }
         }
@@ -92,9 +93,14 @@ namespace ColecaoNumismatica
                 if (AnswUserExists == 1)
                 {
                     lbl_message.Text = "Palavra-passe alterada com sucesso!";
+                    lbl_message.CssClass = "added";
                 }
-                else
-                    lbl_message.Text = "User ou Password errados!";
+                else { 
+                    lbl_message.Text = "Palavra-passe atual incorreta!";
+                    lbl_message.CssClass = "removed";
+
+                }
+
             }
         }
     }

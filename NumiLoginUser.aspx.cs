@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ASPSnippets.FaceBookAPI;
+using ASPSnippets.GoogleAPI;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,22 +14,26 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(tb_emailpwrecover.Text))
-            {
-                rvf_email.Enabled = false;
-            }
+            GoogleConnect.ClientId = ConfigurationManager.AppSettings["clientid"];
+            GoogleConnect.ClientSecret = ConfigurationManager.AppSettings["clientsecret"];
+            GoogleConnect.RedirectUri = ConfigurationManager.AppSettings["redirection_url"];
 
-            //if (string.IsNullOrEmpty(tb_user.Text) && string.IsNullOrEmpty(tb_pw.Text))
-            //{
-            //    rfv_password.Enabled = false;
-            //    rfv_tbuser.Enabled = false;
-            //}
+            FaceBookConnect.API_Key = ConfigurationManager.AppSettings["facebookkey"];
+            FaceBookConnect.API_Secret = ConfigurationManager.AppSettings["facebooksecret"];
+            FaceBookConnect.Version = ConfigurationManager.AppSettings["facebookversion"];
 
             if (Request.QueryString["redirected"] != null && Request.QueryString["redirected"] == "true")
             {
                 lbl_ActivatedUser.Text = Session["ActivatedUser"].ToString();
+                lbl_ActivatedUser.CssClass = "added";
             }
         }
+
+        /// <summary>
+        /// Função para a recuperação de palavra-passe
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void btnRecoverPasswordFE_Click(object sender, EventArgs e)
         {
             string email, body, subject;
@@ -62,37 +68,48 @@ namespace ColecaoNumismatica
             myCon.Open(); //Abrir a conexão
             myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
             int AnswUserExist = Convert.ToInt32(myCommand.Parameters["@UserExist"].Value);
-            int AnswAccountAtive = Convert.ToInt32(myCommand.Parameters["@AccountActive"].Value);
+            int AnswAccountActive = Convert.ToInt32(myCommand.Parameters["@AccountActive"].Value);
 
             myCon.Close(); //Fechar a conexão
 
-            if (AnswUserExist == 1 && AnswAccountAtive == 1)
+            //Caso o utilizador exista e a conta esteja ativa
+            if (AnswUserExist == 1 && AnswAccountActive == 1)
             {
                 email = tb_emailpwrecover.Text;
                 subject = "E-mail de recuperação";
-                body = $"Ex.mo(s) Sr.(s), <br /> A sua nova palavra-passe para o e-mail {tb_emailpwrecover.Text} é a seguinte: {novaPasse}.<br /> Proceda à sua alteração através do seguinte <a href='https://localhost:44399/NumiChangePassword.aspx?<%= user={Classes.MyFunctions.EncryptString(tb_user.Text)} %> &redirected=true'> link </a>!<br />";
+                body = $"Ex.mo(s) Sr.(s), <br /> A sua nova palavra-passe para o e-mail {tb_emailpwrecover.Text} é a seguinte: {novaPasse} <br /> Proceda à sua alteração através do seguinte <a href='https://localhost:44399/NumiChangePassword.aspx?user={Classes.MyFunctions.EncryptString(tb_user.Text)}&redirected=true'> link </a>!<br />";
 
                 lbl_message.Text = $"E-mail enviado para a recuperação da sua conta!";
+                lbl_message.CssClass = "removed";
+
                 Classes.MyFunctions.SendEmail(email, body, subject);
 
             }
-            else if (AnswAccountAtive == 0)
+            else if (AnswAccountActive == 0) //Caso a conta não esteja ativa
             {
                 Session["ActivatedUser"] = "OK";
 
                 email = tb_emailpwrecover.Text;
                 subject = "E-mail de ativação";
-                body = $"Ex.mo(s) Sr(s), <br /><b>Obrigado pela sua inscrição.<br /> Para ativar a sua conta clique <a href='https://localhost:44399/NumiAtivationPage.aspx?user={Classes.MyFunctions.EncryptString(tb_user.Text)}'> aqui </a>!";
+                body = $"Ex.mo(s) Sr(s), <br /><b>Obrigado pela sua inscrição.</b><br />Para ativar a sua conta clique <a href='https://localhost:44399/NumiAtivationPage.aspx?user={Classes.MyFunctions.EncryptString(tb_user.Text)}&redirected=true'>aqui</a>!";
 
                 lbl_message.Text = $"Este e-mail está registado, mas a conta não se encontra ativa! Foi enviado um e-mail para que proceda à ativação da sua conta!";
+                lbl_message.CssClass = "notcollected";
+
                 Classes.MyFunctions.SendEmail(email, body, subject);
             }
-            else
+            else //Caso o e-mail não esteja associado a nenhuma conta
             {
                 lbl_message.Text = "Este e-mail não está associado a nenhuma conta! Registe-se.";
+                lbl_message.CssClass = "removed";
             }
         }
 
+        /// <summary>
+        /// Login na página NumiLogin através dos dados de cliente: utilizador e pw
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void btnLoginBE_Click(object sender, EventArgs e)
         {
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
@@ -148,7 +165,7 @@ namespace ColecaoNumismatica
 
             myCon.Close(); //Fechar a conexão
 
-            if (AnswUserExist == 1)
+            if (AnswUserExist == 1 && AnswAccountActive == 1)
             {
                 if (chkBoxRemember.Checked == true)
                 {
@@ -183,13 +200,22 @@ namespace ColecaoNumismatica
                 Session["Logado"] = "Yes";
                 Response.Redirect("NumiMainPage.aspx");
             }
-            else if (AnswAccountActive == 2)
+            else if (AnswUserExist == 1 && AnswAccountActive == 0)
             {
-                lbl_message.Text = $"A sua conta ainda não se encontra ativa! <a href='https://localhost:44399/NumiActivationPage.aspx?user={Classes.MyFunctions.EncryptString(tb_user.Text)}'> Clique aqui para a ativar </a>!";
+                Session["ActivatedUser"] = "Conta ativada com sucesso!";
+
+                lbl_message.Text = $"A sua conta ainda não se encontra ativa! <a href='https://localhost:44399/NumiAtivationPage.aspx?user={Classes.MyFunctions.EncryptString(tb_user.Text)}&redirected=true'> Clique aqui para a ativar </a>!";
+                lbl_message.CssClass = "notcollected";
+            }
+            else if (AnswUserExist == -1 && AnswAccountActive == -1)
+            {
+                lbl_message.Text = "Este utilizador não está associado a nenhuma conta! Registe-se.";
+                lbl_message.CssClass = "removed";
             }
             else
             {
                 lbl_message.Text = "O seu utilizador ou palavra-passe estão errados! Tente novamente ou recupere a password!";
+                lbl_message.CssClass = "removed";
             }
 
         }
@@ -201,9 +227,8 @@ namespace ColecaoNumismatica
         /// <param name="e"></param>
         protected void btn_facebook_Click(object sender, EventArgs e)
         {
-            //FaceBookConnect.Authorize("user_photosw,email", Request.Url.AbsoluteUri.Split('?')[0]);
-            //Session["Facebook"] = "Yes";
-
+            Session["Facebook"] = "Yes";
+            FaceBookConnect.Authorize("user,email", ConfigurationManager.AppSettings["redirection_url"]);
         }
 
         /// <summary>
@@ -213,34 +238,9 @@ namespace ColecaoNumismatica
         /// <param name="e"></param>
         protected void btn_google_Click(object sender, EventArgs e)
         {
-            string clientid = ConfigurationManager.AppSettings["clientid"];
-            string redirectionURL = ConfigurationManager.AppSettings["redirection_url"];
-            string url = "https://accounts.google.com/o/oauth2/v2/auth?scope=profile&include_granted_scopes=true&redirect_uri=" + redirectionURL + "&response_type=code&client_id=" + clientid + "";
-
-            //FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
-            //           1,                              // version
-            //           clientid,                       // username
-            //           DateTime.Now,                   // issue time
-            //           DateTime.Now.AddMinutes(30),    // expiration time
-            //           false,                          // persistent
-            //           "user"                          // user data (optional)
-            //       );
-
-            //// Encrypt the ticket
-            //string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-
-            //// Create a new cookie and set its value to the encrypted ticket
-            //HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-
-            //// Set cookie expiration
-            //authCookie.Expires = authTicket.Expiration;
-
-            //// Add the cookie to the response
-            //Response.Cookies.Add(authCookie);
             Session["Google"] = "Yes";
-            Response.Redirect(url);
+            GoogleConnect.Authorize("profile", "email");
         }
-
 
     }
 }

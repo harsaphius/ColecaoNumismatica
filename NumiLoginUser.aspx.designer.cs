@@ -123,6 +123,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.Label lbl_message;
 
         /// <summary>
+        /// rvf_email control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rvf_email;
+
+        /// <summary>
         /// tb_emailpwrecover control.
         /// </summary>
         /// <remarks>
@@ -141,15 +150,6 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.RegularExpressionValidator rev_email;
 
         /// <summary>
-        /// rvf_email control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rvf_email;
-
-        /// <summary>
         /// btnRecoverPasswordFE control.
         /// </summary>
         /// <remarks>
@@ -157,5 +157,14 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnRecoverPasswordFE;
+
+        /// <summary>
+        /// ValidationSummary2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary2;
     }
 }

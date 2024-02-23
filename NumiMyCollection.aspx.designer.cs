@@ -15,15 +15,6 @@ namespace ColecaoNumismatica
     {
 
         /// <summary>
-        /// btn_export control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn_export;
-
-        /// <summary>
         /// rpt_mycollection control.
         /// </summary>
         /// <remarks>
@@ -31,5 +22,14 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater rpt_mycollection;
+
+        /// <summary>
+        /// btn_export control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btn_export;
     }
 }

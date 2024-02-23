@@ -31,14 +31,14 @@
           <!-- Utilizador input -->
           <div class="form-outline mb-4"> 
               <label class="form-label" for="tb_email">Utilizador</label>&nbsp;
-              <asp:RequiredFieldValidator ID="rfv_tbuser" runat="server" ErrorMessage="Utilizador Obrigatório" ControlToValidate="tb_user" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+              <asp:RequiredFieldValidator ID="rfv_tbuser" runat="server" ErrorMessage="Utilizador Obrigatório" ControlToValidate="tb_user" Text="*" ForeColor="Red" ValidationGroup="MainGroup"></asp:RequiredFieldValidator>
               <asp:TextBox ID="tb_user" runat="server" class="form-control form-control-lg" placeholder="Introduza o utilizador"></asp:TextBox>           
           </div>
 
           <!-- Password input -->
           <div class="form-outline mb-3">
               <label class="form-label" for="tb_pw">Password</label>&nbsp; 
-              <asp:RequiredFieldValidator ID="rfv_password" runat="server" ErrorMessage="Password Obrigatória" ControlToValidate="tb_pw" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+              <asp:RequiredFieldValidator ID="rfv_password" runat="server" ErrorMessage="Password Obrigatória" ControlToValidate="tb_pw" Text="*" ForeColor="Red" ValidationGroup="MainGroup"></asp:RequiredFieldValidator>
               <asp:TextBox ID="tb_pw" runat="server" class="form-control form-control-lg" placeholder="Introduza a password" ></asp:TextBox>
           </div>
 
@@ -53,18 +53,17 @@
           </div>
             
           <div class="text-center text-lg-start mt-4 pt-2">
-            <asp:Button class="btn btn-primary btn-lg" ID="btnLoginBE" OnClick="btnLoginBE_Click" runat="server" Text="Login" style="padding-left: 2.5rem; padding-right: 2.5rem;"/>
+            <asp:Button class="btn btn-primary btn-lg" ID="btnLoginBE" OnClick="btnLoginBE_Click" runat="server" Text="Login" style="padding-left: 2.5rem; padding-right: 2.5rem;" ValidationGroup="MainGroup" />
             <p class="small fw-bold mt-2 pt-1 mb-0">Ainda não estás registado(a)? 
             <asp:LinkButton ID="lbtn_register" class="link-danger" href="NumiRegisterUser.aspx" runat="server" CausesValidation="False">
             Regista-te aqui!</asp:LinkButton>
             </p>
             <br />
-            <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
+            <asp:ValidationSummary ID="ValidationSummary1" runat="server" ForeColor="Red" ValidationGroup="MainGroup" DisplayMode="List" />
           </div>
           <div><asp:Label ID="lbl_message" runat="server" Text=""></asp:Label></div>
       
 <!--Modal-->
-
 <div id="pwdModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
   <div class="modal-content">
@@ -77,15 +76,16 @@
                     <div class="panel-body">
                         <div class="text-center">
                           
-                          <p>Digita o teu e-mail para recuperar a palavra-passe.</p>
+                          <p>Digita o teu e-mail para recuperar a palavra-passe. <asp:RequiredFieldValidator ID="rvf_email" runat="server" ErrorMessage="E-mail Obrigatório" ControlToValidate="tb_emailpwrecover" Text="*" ValidationGroup="ModalGroup" ForeColor="Red"></asp:RequiredFieldValidator></p>
                             <div class="panel-body">
                                 <fieldset>
                                     <div class="form-group">
-                                        <asp:TextBox ID="tb_emailpwrecover" runat="server" class="form-control input-lg" placeholder="E-mail Address"></asp:TextBox>  
+                                        <asp:TextBox ID="tb_emailpwrecover" runat="server" class="form-control input-lg" placeholder="E-mail Address"></asp:TextBox>
                                         <asp:RegularExpressionValidator ID="rev_email" runat="server" ErrorMessage="E-mail no Formato Incorreto" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="tb_emailpwrecover" Text="*" ForeColor="Blue"></asp:RegularExpressionValidator>
-                                        <asp:RequiredFieldValidator ID="rvf_email" runat="server" ErrorMessage="E-mail Obrigatório" ControlToValidate="tb_emailpwrecover" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
                                     </div>
-                                    <asp:Button ID="btnRecoverPasswordFE" runat="server" class="btn btn-lg btn-primary btn-block" Text="Recuperar Password" OnClick="btnRecoverPasswordFE_Click" />
+                                    <asp:Button ID="btnRecoverPasswordFE" runat="server" class="btn btn-lg btn-primary btn-block" Text="Recuperar Password" OnClick="btnRecoverPasswordFE_Click" ValidationGroup="ModalGroup" />
+                                    <br /><asp:ValidationSummary ID="ValidationSummary2" runat="server" ForeColor="Red" ValidationGroup="ModalGroup" DisplayMode="List" />
+
                                 </fieldset>
                             </div>
                         </div>
@@ -110,6 +110,4 @@
   </div>
    
 </section>
-  
-<!--End of Tawk.to Script-->
 </asp:Content>

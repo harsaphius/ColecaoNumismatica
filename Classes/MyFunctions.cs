@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
-using System.Web;
 
 namespace ColecaoNumismatica.Classes
 {
@@ -177,10 +175,11 @@ namespace ColecaoNumismatica.Classes
                 Money record = new Money();
                 record.cod = Convert.ToInt32(dr["CodMN"]);
                 record.titulo = dr["Titulo"].ToString();
-                record.valorCunho = Convert.ToDecimal(dr["ValorCunho"]);
+                record.valorCunho = dr["ValorCunho"].ToString();
                 record.valorAtual = Convert.ToDecimal(dr["ValorAtual"]);
+                record.estado = dr["estado"].ToString();
+                record.codC = Convert.ToInt32(dr["CodEstado"]);
                 record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
-                record.estado = dr["CodEstado"].ToString();
                 record.tipo = dr["CodTipoMN"].ToString();
                 LstMoney.Add(record);
             }
@@ -189,49 +188,5 @@ namespace ColecaoNumismatica.Classes
 
             return LstMoney;
         }
-        public static void SQLConnect(string code)
-        {
-            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
-            SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
-            myCommand.Parameters.AddWithValue("@CodMN", code);
-
-            myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-            myCommand.CommandText = "NumiRemoveCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-            myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-            myCon.Open(); //Abrir a conexão
-            myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-            myCon.Close();
-        }
-        public static void SQLConnect(List <string> values)
-        { 
-            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
-           
-            SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
-            myCommand.Parameters.AddWithValue("@CodMN", values[0]);
-            myCommand.Parameters.AddWithValue("@Titulo", values[1]);
-            myCommand.Parameters.AddWithValue("@Descricao", values[2]);
-            myCommand.Parameters.AddWithValue("@CodEstado", values[3]);
-            myCommand.Parameters.AddWithValue("@CodTipoMN", values[4]);
-            if (values[5].Contains("."))
-            {
-                values[5] = values[5].Replace(".", ",");
-                myCommand.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(values[5]));
-            }
-            else
-            {
-                myCommand.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(values[5]));
-            }
-
-            myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-            myCommand.CommandText = "NumiUpdateCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-            myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-            myCon.Open(); //Abrir a conexão
-            myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-            myCon.Close();
-
-        }
-
     }
 }

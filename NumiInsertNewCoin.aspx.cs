@@ -13,6 +13,8 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            string script;
+
             if (Session["Logado"] == null)
             {
                 Response.Redirect("NumiLoginUser.aspx");
@@ -29,7 +31,8 @@ namespace ColecaoNumismatica
                     lblMessage.Text = "Bem-vindo " + user;
                 }
 
-                string script2 = @"
+                script = @"
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
@@ -38,18 +41,21 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script2, true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
 
                 if (isAdmin == "Yes")
                 {
-                    string script3 = @"
-                            document.getElementById('btn_insertNewCoin').classList.remove('hidden');
-                            document.getElementById('btn_manageCoins').classList.remove('hidden');
-                            document.getElementById('btn_manageUsers').classList.remove('hidden');
-                            document.getElementById('btn_statistics').classList.remove('hidden');
-                            document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+                    script = @"
+                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                             document.getElementById('divider1').classList.remove('hidden');
+                             document.getElementById('divider2').classList.remove('hidden');
+                             document.getElementById('divider3').classList.remove('hidden');
+                             document.getElementById('btn_manageCoins').classList.remove('hidden');
+                             document.getElementById('btn_manageUsers').classList.remove('hidden');
+                             document.getElementById('btn_statistics').classList.remove('hidden');
+                             document.getElementById('btn_registerNewUser').classList.remove('hidden');";
 
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script3, true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
                 }
             }
         }
@@ -61,18 +67,9 @@ namespace ColecaoNumismatica
 
             myCommand.Parameters.AddWithValue("@Titulo", tb_titulo.Text);
             myCommand.Parameters.AddWithValue("@CodTipoMN", ddl_tipo.SelectedValue);
-            myCommand.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
             myCommand.Parameters.AddWithValue("@Descricao", tb_descricao.Text);
-            if(tb_valorCunho.Text.Contains("."))
-            {
-                tb_valorCunho.Text = tb_valorCunho.Text.Replace(".", ",");
-                myCommand.Parameters.AddWithValue("@ValorCunho", Convert.ToDecimal(tb_valorCunho.Text));
-            }
-            else
-            {
-                myCommand.Parameters.AddWithValue("@ValorCunho", Convert.ToDecimal(tb_valorCunho.Text));
-            }
-            
+            myCommand.Parameters.AddWithValue("@ValorCunho",tb_valorCunho.Text);          
+
             //Devolver o código da moeda/nota
             SqlParameter CodMN = new SqlParameter();
             CodMN.ParameterName = "@CodMN";
@@ -80,6 +77,13 @@ namespace ColecaoNumismatica
             CodMN.SqlDbType = SqlDbType.Int;
 
             myCommand.Parameters.Add(CodMN);
+
+            SqlParameter CoinExists = new SqlParameter();
+            CoinExists.ParameterName = "@CoinExists";
+            CoinExists.Direction = ParameterDirection.Output;
+            CoinExists.SqlDbType = SqlDbType.Int;
+
+            myCommand.Parameters.Add(CoinExists);
 
             myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
             myCommand.CommandText = "NumiInsertCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
@@ -89,8 +93,10 @@ namespace ColecaoNumismatica
             myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
 
             int AnswCodMN = Convert.ToInt32(myCommand.Parameters["@CodMN"].Value);
+            int AnswCoinExists = Convert.ToInt32(myCommand.Parameters["@CoinExists"].Value);
 
             //Insert Coin State
+
             SqlCommand sqlCommand2 = new SqlCommand();
 
             sqlCommand2.Connection = myCon;
@@ -98,77 +104,104 @@ namespace ColecaoNumismatica
             sqlCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
             if (tb_valorAtual.Text.Contains("."))
             {
-                tb_valorAtual.Text = tb_valorAtual.Text.Replace(".", ","); 
+                tb_valorAtual.Text = tb_valorAtual.Text.Replace(".", ",");
                 sqlCommand2.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(tb_valorAtual.Text));
             }
             else
             {
                 sqlCommand2.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(tb_valorAtual.Text));
             }
-           
+
+            SqlParameter CoinStateExists = new SqlParameter();
+            CoinStateExists.ParameterName = "@CoinStateExists";
+            CoinStateExists.Direction = ParameterDirection.Output;
+            CoinStateExists.SqlDbType = SqlDbType.Int;
+
+            sqlCommand2.Parameters.Add(CoinStateExists);
+
             sqlCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
             sqlCommand2.CommandText = "NumiCoinStateMNInsert"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
 
             sqlCommand2.ExecuteNonQuery();
             myCon.Close();
 
-            //Insert Coin MNImage
-            //Imagens
-            foreach (HttpPostedFile postedFile in fu_imagens.PostedFiles)
+            int AnswCoinStateExists = Convert.ToInt32(sqlCommand2.Parameters["@CoinStateExists"].Value);
+
+            if (AnswCoinExists == 0)
             {
-                string fileName = Path.GetFileName(postedFile.FileName);
-                string fileContentType = postedFile.ContentType;
-                int fileSize = postedFile.ContentLength;
-
-                // Ler o conteúdo do ficheiro para o array de bytes
-                byte[] fileData = new byte[fileSize];
-                postedFile.InputStream.Read(fileData, 0, fileSize);
-
-                //Gravar o ficheiro na base de dados
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+                //Insert Coin MNImage
+                //Imagens
+                foreach (HttpPostedFile postedFile in fu_imagens.PostedFiles)
                 {
-                    SqlCommand sqlCommand3 = new SqlCommand();
-                    sqlCommand3.Connection = connection;
+                    string fileName = Path.GetFileName(postedFile.FileName);
+                    string fileContentType = postedFile.ContentType;
+                    int fileSize = postedFile.ContentLength;
 
-                    if ((fu_imagens.HasFile))
-                    {
-                        sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
-                    }
-                    else
-                    {
-                        string imagePath = "C:\\Users\\pcris\\source\\repos\\ColecaoNumismatica\\Images\\NumiDefault.png";
+                    // Ler o conteúdo do ficheiro para o array de bytes
+                    byte[] fileData = new byte[fileSize];
+                    postedFile.InputStream.Read(fileData, 0, fileSize);
 
-                        // Read the image file into a byte array
-                        byte[] binaryData;
-                        using (FileStream fileStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
+                    //Gravar o ficheiro na base de dados
+                    using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+                    {
+                        SqlCommand sqlCommand3 = new SqlCommand();
+                        sqlCommand3.Connection = connection;
+
+                        if ((fu_imagens.HasFile))
                         {
-                            binaryData = new byte[fileStream.Length];
-                            fileStream.Read(binaryData, 0, (int)fileStream.Length);
+                            sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
+                        }
+                        else
+                        {
+                            string imagePath = "C:\\Users\\pcris\\source\\repos\\ColecaoNumismatica\\Images\\NumiDefault.png";
+
+                            // Read the image file into a byte array
+                            byte[] binaryData;
+                            using (FileStream fileStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
+                            {
+                                binaryData = new byte[fileStream.Length];
+                                fileStream.Read(binaryData, 0, (int)fileStream.Length);
+                            }
+
+                            sqlCommand3.Parameters.AddWithValue("@Imagem", binaryData);
                         }
 
-                        sqlCommand3.Parameters.AddWithValue("@Imagem", binaryData);
+                        sqlCommand3.Parameters.AddWithValue("@CodMN", AnswCodMN);
+
+                        SqlParameter CodImagem = new SqlParameter();
+                        CodImagem.ParameterName = "@CodImagem";
+                        CodImagem.Direction = ParameterDirection.Output;
+                        CodImagem.SqlDbType = SqlDbType.Int;
+
+                        sqlCommand3.Parameters.Add(CodImagem);
+
+                        sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                        sqlCommand3.CommandText = "NumiCoinMNImageInsert"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                        connection.Open();
+                        sqlCommand3.ExecuteNonQuery();
+                        connection.Close();
                     }
-
-                    sqlCommand3.Parameters.AddWithValue("@CodMN", AnswCodMN);
-
-                    SqlParameter CodImagem = new SqlParameter();
-                    CodImagem.ParameterName = "@CodImagem";
-                    CodImagem.Direction = ParameterDirection.Output;
-                    CodImagem.SqlDbType = SqlDbType.Int;
-
-                    sqlCommand3.Parameters.Add(CodImagem);
-
-                    sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                    sqlCommand3.CommandText = "NumiCoinMNImageInsert"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                    connection.Open();
-                    sqlCommand3.ExecuteNonQuery();
-                    connection.Close();
-                }              
+                }
             }
             myCon.Close();
 
-            lbl_message.Text = "Money inserido com sucesso!";
+
+            if (AnswCoinExists == 0)
+            {
+                lbl_message.Text = "Money inserido com sucesso!";
+                lbl_message.CssClass = "added";
+            }
+            else if (AnswCoinExists == 1 && AnswCoinStateExists == 0)
+            {
+                lbl_message.Text = "Money já existente inserido no estado pretendido!";
+                lbl_message.CssClass = "added";
+            }
+            else
+            {
+                lbl_message.Text = "Money já existe na BD nesse estado!";
+                lbl_message.CssClass = "removed";
+            }
         }
     }
 }

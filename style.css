@@ -1,5 +1,5 @@
 ﻿* {
-
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -18,7 +18,7 @@ body {
 }
 
 .h-custom {
-    height: calc(100% - 73px);
+    height: calc(100% - 100px);
 }
 
 @media (max-width: 550px) {
@@ -33,7 +33,7 @@ body {
 }
 
 
-/*RegisterAccountFE*/
+RegisterAccountFE
 .card-registration .select-input.form-control[readonly]:not([disabled]) {
     font-size: 1rem;
     line-height: 2.15;
@@ -62,26 +62,20 @@ body {
     display: block;
 }
 
-
-/*FontAwesome Icon Button*/
-/*.fa-icon-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-}*/
-
 .added {
     color:green;
     border:inset;
+    padding:2px;
 }
 
-.removed 
-{
+.removed {
     color: red;
     border: inset;
+    padding: 2px;
 }
 
-.notcollected{
-    color:darkgoldenrod;
-    border:inset;
+.notcollected {
+    color: darkgoldenrod;
+    border: inset;
+    padding: 2px;
 }
