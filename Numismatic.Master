@@ -17,7 +17,7 @@
 <body>
     <form id="form1" runat="server">
       <nav class="navbar navbar-expand-sm navbar-light bg-primary"> 
-          <a class="navbar-brand text-white">NumiCoin</a>
+          <a class="navbar-brand text-white" href="NumiMainPage.aspx">NumiCoin</a>
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
               </button>

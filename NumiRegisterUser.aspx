@@ -2,7 +2,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-<section style="background-color: #eee;">
+<div>
+<section style="background-color: #eee; padding:50px">
 <div class="container flex">
     <div class="row justify-content-center align-items-center">           
       <div class="col-lg-12 col-xl-11 flex">
@@ -73,5 +74,5 @@
     </div>
   </div>
 </section>
-
+</div>
 </asp:Content>

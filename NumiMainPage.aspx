@@ -14,9 +14,7 @@
                 <asp:ListItem Value="Preço Descendente"></asp:ListItem>
             </asp:DropDownList>
         </div>
-    <div style="display: flex; justify-content: center; padding: 20px;">
-        
-
+<div style="display: flex; justify-content: center; padding: 20px;">
         <asp:Repeater ID="rpt_mainpage" runat="server" OnItemCommand="rpt_mainpage_ItemCommand">
             <HeaderTemplate>
                 <div class="container">
