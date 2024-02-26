@@ -48,7 +48,7 @@ namespace ColecaoNumismatica.Classes
             }
             catch (Exception ex)
             {
-                //Mensagem de insucesso conforme a exceção encontrada.
+                /*ex.Message = ""*/;//Mensagem de insucesso conforme a exceção encontrada.
             }
 
         }
@@ -163,7 +163,6 @@ namespace ColecaoNumismatica.Classes
         public static List<Money> Listar(string query)
         {
             List<Money> LstMoney = new List<Money>();
-
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
             SqlCommand myCommand = new SqlCommand(query, myCon);
             myCon.Open();
@@ -175,18 +174,21 @@ namespace ColecaoNumismatica.Classes
                 Money record = new Money();
                 record.cod = Convert.ToInt32(dr["CodMN"]);
                 record.titulo = dr["Titulo"].ToString();
+                record.estado = dr["Estado"].ToString();
                 record.valorCunho = dr["ValorCunho"].ToString();
                 record.valorAtual = Convert.ToDecimal(dr["ValorAtual"]);
-                record.estado = dr["estado"].ToString();
-                record.codC = Convert.ToInt32(dr["CodEstado"]);
                 record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
-                record.tipo = dr["CodTipoMN"].ToString();
+                record.imagemC = Convert.ToBase64String((byte[])dr["Imagem"]);
+ 
                 LstMoney.Add(record);
             }
+
+            
 
             myCon.Close();
 
             return LstMoney;
         }
+
     }
 }

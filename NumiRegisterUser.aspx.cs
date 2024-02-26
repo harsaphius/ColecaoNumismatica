@@ -14,8 +14,10 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string script = @"
-                            document.getElementById('btn_home').classList.remove('hidden');";
+            string script = @"                      
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
+                            document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('btn_login').classList.remove('hidden');";
 
             Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
 
@@ -23,72 +25,113 @@ namespace ColecaoNumismatica
             {
                 if (!string.IsNullOrEmpty(Request.QueryString["code"]))
                 {
-                    if (Session["Google"].ToString() == "Yes")
+                    string email, subject, body, utilizador="";
+
+                    if (Session["Google"] != null)
                     {
-                        GoogleConnect.RedirectUri = Request.Url.AbsoluteUri.Split('?')[0];
-                        string code = Request.QueryString["code"];
-                        string json = GoogleConnect.Fetch("me", code);
-                        GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
-                        tb_user.Text = profile.Name;
-                        tb_email.Text = profile.Email;
-
-                        List<object> Answers = CheckEmail();
-
-                        if(Convert.ToInt32(Answers[0]) == 1 && Convert.ToInt32(Answers[1]) == 1)
+                        if (Session["Google"].ToString() == "Yes")
                         {
-                            Session["Logado"] = "Yes";
-                            Session["Admin"] = "Yes";
-                            Session["User"] = Convert.ToString(Answers[2]);
-                            Session["CodUtilizador"] = Convert.ToInt32(Answers[3]);
-                            Response.Redirect("NumiMainPage.aspx");
-                        }
-                        if (Convert.ToInt32(Answers[0]) == 1 && Convert.ToInt32(Answers[1]) == 0)
-                        {
-                            Session["Logado"] = "Yes";
-                            Session["Admin"] = "No";
-                            Session["User"] = Convert.ToString(Answers[2]);
-                            Session["CodUtilizador"] = Convert.ToInt32(Answers[3]);
-                            Response.Redirect("NumiMainPage.aspx");
+                            GoogleConnect.RedirectUri = Request.Url.AbsoluteUri.Split('?')[0];
+                            string code = Request.QueryString["code"];
+                            string json = GoogleConnect.Fetch("me", code);
+                            GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
+                            tb_user.Text = profile.Name;
+                            tb_email.Text = profile.Email;
+
+                            List<object> Answers = CheckEmail();
+
+                            int AccountActive = Convert.ToInt32(Answers[4]);
+
+                            if (Convert.ToInt32(Answers[0]) == 1 && Convert.ToInt32(Answers[1]) == 1 && AccountActive == 1)
+                            {
+                                Session["Logado"] = "Yes";
+                                Session["Admin"] = "Yes";
+                                Session["User"] = Convert.ToString(Answers[2]);
+                                utilizador = Session["User"].ToString();
+                                Session["CodUtilizador"] = Convert.ToInt32(Answers[3]);
+                                Session["Google"] = null;
+                                Response.Redirect("NumiMainPage.aspx");
+                            }
+                            if (Convert.ToInt32(Answers[0]) == 1 && AccountActive == 0)
+                            {
+                                lbl_message.Text = "A sua conta não está ativa!";
+                                lbl_message.CssClass = "added";
+
+                                email = tb_email.Text;
+                                subject = "E-mail de ativação";
+                                body = $"<b>Obrigado pela sua inscrição. Para ativar a sua conta clique <a href='https://localhost:44399/NumiAtivationPage.aspx?user={MyFunctions.EncryptString(utilizador)}&redirected=true'> aqui</a>!";
+                                MyFunctions.SendEmail(email, body, subject);
+                                Session["Google"] = null;
+                            }
+                            if (Convert.ToInt32(Answers[0]) == 1 && Convert.ToInt32(Answers[1]) == 0)
+                            {
+                                Session["Logado"] = "Yes";
+                                Session["Admin"] = "No";
+                                Session["User"] = Convert.ToString(Answers[2]);
+                                Session["CodUtilizador"] = Convert.ToInt32(Answers[3]);
+                                Response.Redirect("NumiMainPage.aspx");
+                                Session["Google"] = null;
+                            }
                         }
                     }
-                    else if (Session["Facebook"].ToString() == "Yes")
+
+                    if (Session["Facebook"] != null)
                     {
-                        FaceBookConnect.Authorize("user,email", Request.Url.AbsoluteUri.Split('?')[0]);
-
-                        string data = FaceBookConnect.Fetch(Request.QueryString["code"], "me", "id,name,email");
-                        FaceBookUser faceBookUser = new JavaScriptSerializer().Deserialize<FaceBookUser>(data);
-                        tb_user.Text = faceBookUser.Name;
-                        tb_email.Text = faceBookUser.Email;
-
-                        List<object> Answers = CheckEmail();
-
-                        if (Convert.ToInt32(Answers[0]) == 1 && Convert.ToInt32(Answers[1]) == 1)
+                        if (Session["Facebook"].ToString() == "Yes")
                         {
-                            Session["Logado"] = "Yes";
-                            Session["Admin"] = "Yes";
-                            Session["User"] = Convert.ToString(Answers[2]);
-                            Session["CodUtilizador"] = Convert.ToInt32(Answers[3]);
-                            Response.Redirect("NumiMainPage.aspx");
-                        }
-                        if (Convert.ToInt32(Answers[0]) == 1 && Convert.ToInt32(Answers[1]) == 0)
-                        {
-                            Session["Logado"] = "Yes";
-                            Session["Admin"] = "No";
-                            Session["User"] = Convert.ToString(Answers[2]);
-                            Session["CodUtilizador"] = Convert.ToInt32(Answers[3]);
-                            Response.Redirect("NumiMainPage.aspx");
+                            string data = FaceBookConnect.Fetch(Request.QueryString["code"], "me", "id, name, email");
+                            FaceBookUser faceBookUser = new JavaScriptSerializer().Deserialize<FaceBookUser>(data);
+                            tb_user.Text = faceBookUser.Name;
+                            tb_email.Text = faceBookUser.Email;
+
+                            List<object> Answers = CheckEmail();
+
+                            int AccountActive = Convert.ToInt32(Answers[4]);
+
+                            if (Convert.ToInt32(Answers[0]) == 1 && Convert.ToInt32(Answers[1]) == 1 && AccountActive == 1)
+                            {
+                                Session["Logado"] = "Yes";
+                                Session["Admin"] = "Yes";
+                                Session["User"] = Convert.ToString(Answers[2]);
+                                Session["CodUtilizador"] = Convert.ToInt32(Answers[3]);
+                                Session["Facebook"] = null;
+
+                                Response.Redirect("NumiMainPage.aspx");
+                            }
+                            if (Convert.ToInt32(Answers[0]) == 1 && AccountActive == 0)
+                            {
+                                lbl_message.Text = "A sua conta não está ativa!";
+                                lbl_message.CssClass = "added";
+
+                                email = tb_email.Text;
+                                subject = "E-mail de ativação";
+                                body = $"<b>Obrigado pela sua inscrição. Para ativar a sua conta clique <a href='https://localhost:44399/NumiAtivationPage.aspx?user={MyFunctions.EncryptString(tb_user.Text)}&redirected=true'> aqui</a>!";
+                                MyFunctions.SendEmail(email, body, subject);
+
+                                Session["Facebook"] = null;
+                            }
+                            if (Convert.ToInt32(Answers[0]) == 1 && Convert.ToInt32(Answers[1]) == 0)
+                            {
+                                Session["Logado"] = "Yes";
+                                Session["Admin"] = "No";
+                                Session["User"] = Convert.ToString(Answers[2]);
+                                Session["CodUtilizador"] = Convert.ToInt32(Answers[3]);
+                                Session["Facebook"] = null;
+
+                                Response.Redirect("NumiMainPage.aspx");
+                            }
                         }
                     }
                 }
 
                 if (Request.QueryString["error"] == "access_denied")
-                    {
-                        ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('User has denied access.')", true);
-                        return;
-                    }
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('User has denied access.')", true);
+                    return;
                 }
             }
-        
+        }
+
         protected void btn_registar_Click(object sender, EventArgs e)
         {
             if (chkBoxAccept.Checked == true)
@@ -161,7 +204,6 @@ namespace ColecaoNumismatica
             UserExists.ParameterName = "@UserExists";
             UserExists.Direction = ParameterDirection.Output;
             UserExists.SqlDbType = SqlDbType.Int;
-
             myCommand.Parameters.Add(UserExists);
 
             //Variável de Output para SP verificar o perfil
@@ -170,7 +212,6 @@ namespace ColecaoNumismatica
             NumiAdmin.Direction = ParameterDirection.Output;
             NumiAdmin.Direction = ParameterDirection.Output;
             NumiAdmin.SqlDbType = SqlDbType.Int;
-
             myCommand.Parameters.Add(NumiAdmin);
 
             SqlParameter Utilizador = new SqlParameter();
@@ -179,7 +220,6 @@ namespace ColecaoNumismatica
             Utilizador.Direction = ParameterDirection.Output;
             Utilizador.SqlDbType = SqlDbType.VarChar;
             Utilizador.Size = 50;
-
             myCommand.Parameters.Add(Utilizador);
 
             //CodUtilizador
@@ -187,8 +227,14 @@ namespace ColecaoNumismatica
             CodUtilizador.ParameterName = "@CodUtilizador";
             CodUtilizador.Direction = ParameterDirection.Output;
             CodUtilizador.SqlDbType = SqlDbType.Int;
-
             myCommand.Parameters.Add(CodUtilizador);
+
+            //AccountActive
+            SqlParameter AccountActive = new SqlParameter();
+            AccountActive.ParameterName = "@AccountActive";
+            AccountActive.Direction = ParameterDirection.Output;
+            AccountActive.SqlDbType = SqlDbType.Int;
+            myCommand.Parameters.Add(AccountActive);
 
             myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
             myCommand.CommandText = "NumiCheckEmail"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
@@ -205,8 +251,10 @@ namespace ColecaoNumismatica
             Answers.Add(AnswUtilizador);
             int AnswCodUtilizador = Convert.ToInt32(myCommand.Parameters["@CodUtilizador"].Value);
             Answers.Add(AnswCodUtilizador);
+            int AnswAccountActive = Convert.ToInt32(myCommand.Parameters["@AccountActive"].Value);
+            Answers.Add(AnswAccountActive);
 
-            return Answers; 
+            return Answers;
         }
     }
 }

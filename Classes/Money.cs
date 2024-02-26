@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ColecaoNumismatica
 {
@@ -16,5 +17,6 @@ namespace ColecaoNumismatica
         public string imagemC { get; set; }
         public int quantidade { get; set; }
     }
+
 
 }

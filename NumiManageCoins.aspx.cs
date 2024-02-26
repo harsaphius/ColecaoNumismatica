@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
+using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -15,10 +15,12 @@ namespace ColecaoNumismatica
         protected void Page_Load(object sender, EventArgs e)
         {
             string script;
+            lbl_message.Text = "";
+            lbl_message.CssClass = "";
 
             if (Session["Logado"] == null)
             {
-                Response.Redirect("NumiLoginUser.aspx");
+                Response.Redirect("NumiMainPage.aspx");
             }
             else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
             {
@@ -58,14 +60,22 @@ namespace ColecaoNumismatica
 
                     Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
                 }
+
             }
         }
 
+        /// <summary>
+        /// Função de DataBound do repeater rpt_managaCoins com os dados da BD; Preenche também o nested repeater rpt_imagens com as informações da função GetImagePerCod()
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void rpt_manageCoins_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
                 DataRowView dataRow = (DataRowView)e.Item.DataItem; //Acesso campo a campo
+
+                Session["CodMN"] = Convert.ToInt32(dataRow["CodMN"]);
 
                 ((Label)e.Item.FindControl("lbl_cod")).Text = dataRow["CodMN"].ToString();
                 ((TextBox)e.Item.FindControl("tb_titulo")).Text = dataRow["Titulo"].ToString();
@@ -73,48 +83,112 @@ namespace ColecaoNumismatica
                 ((DropDownList)e.Item.FindControl("ddl_estado")).SelectedValue = dataRow["CodEstado"].ToString();
                 ((DropDownList)e.Item.FindControl("ddl_tipo")).SelectedValue = dataRow["CodTipoMN"].ToString();
                 ((TextBox)e.Item.FindControl("tb_valorAtual")).Text = dataRow["ValorAtual"].ToString();
-                Panel panelControl = (Panel)e.Item.FindControl("imagePanel"); // Adjust control ID as needed
 
-                // Check if the control is found and is of the expected type
-                //if (panelControl != null)
-                //{
-                //    List<Money> LstMoney = GetDataForItem(dataRow);
+                Repeater rpt_imagens = (Repeater)e.Item.FindControl("rpt_imagens");
 
-                //    // Loop through each Money object and add the corresponding image to the Panel
-                //    foreach (Money money in LstMoney)
-                //    {
-                //        Image img = new Image();
-                //        img.ImageUrl = money.imagem;
-                //        panelControl.Controls.Add(img);
+                foreach (RepeaterItem item in rpt_imagens.Items)
+                {
+                    HiddenField hiddenCodImage = (HiddenField)item.FindControl("hiddenCodImage");
+                    if (dataRow["CodImagem"] != null && int.TryParse(dataRow["CodImagem"].ToString(), out int codImagem))
+                    {
+                        hiddenCodImage.Value = codImagem.ToString();
+                    }
+                }
 
-                //        // Optionally, add a line break after each image
-                //        panelControl.Controls.Add(new LiteralControl("<br />"));
-                //    }
-                //}
+                List<ImageInfo> images = GetImagesPerCodMN();
+
+                rpt_imagens.DataSource = images;
+                rpt_imagens.DataBind();
 
                 ((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument = dataRow["CodMN"].ToString();
                 ((ImageButton)e.Item.FindControl("imgBtn_apaga")).CommandArgument = dataRow["CodMN"].ToString();
             }
+
         }
 
-        //private List<Money> GetDataForItem(DataRowView dataRow)
-        //{
-        //    List<Money> moneyList = new List<Money>();
-
-        //    // Get data from the DataRowView and construct Money objects
-        //    Money money = new Money();
-        //    money.imagem = dataRow["Imagem"].ToString(); // Assuming "Imagem" is the column containing image URLs
-        //    moneyList.Add(money);
-
-        //    // You can add more Money objects if needed, depending on your data structure
-
-        //    return moneyList;
-        //}
-
+        /// <summary>
+        /// Função de ItemCommand do repeater rpt_manageCoins que utiliza as funções NumiCoinUpdateCoin e NumiCoinRemoveCoin
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         protected void rpt_manageCoins_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName.Equals("imgBtn_grava"))
             {
+                int CodMN = Convert.ToInt32(e.CommandArgument);
+
+                FileUpload fileUploadInner = (FileUpload)e.Item.FindControl("fileUploadNewImage");
+
+                if (fileUploadInner.HasFile)
+                {
+                    foreach (HttpPostedFile postedFile in fileUploadInner.PostedFiles)
+                    {
+                        string fileName = Path.GetFileName(postedFile.FileName);
+                        string fileContentType = postedFile.ContentType;
+                        int fileSize = postedFile.ContentLength;
+
+                        // Ler o conteúdo do ficheiro para o array de bytes
+                        byte[] fileData = new byte[fileSize];
+                        postedFile.InputStream.Read(fileData, 0, fileSize);
+
+                        //Gravar o ficheiro na base de dados
+                        using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+                        {
+                            SqlCommand sqlCommand3 = new SqlCommand();
+                            sqlCommand3.Connection = connection;
+
+                            sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
+                            sqlCommand3.Parameters.AddWithValue("@CodMN", CodMN);
+
+                            sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                            sqlCommand3.CommandText = "NumiCoinInsertImage"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                            connection.Open();
+                            sqlCommand3.ExecuteNonQuery();
+                            connection.Close();
+                        }
+                    }
+                }
+
+                Repeater rpt_imagens = (Repeater)e.Item.FindControl("rpt_imagens");
+
+                foreach (RepeaterItem item in rpt_imagens.Items)
+                {
+                    FileUpload fileUpload = (FileUpload)item.FindControl("fileUploadInner");
+                    HiddenField hiddenCodImage = (HiddenField)item.FindControl("hiddenCodImage");
+
+                    if (fileUpload.HasFile)
+                    {
+                        foreach (HttpPostedFile postedFile in fileUpload.PostedFiles)
+                        {
+                            string fileName = postedFile.FileName;
+                            string fileContentType = postedFile.ContentType;
+                            int fileSize = postedFile.ContentLength;
+
+                            // Ler o conteúdo do ficheiro para o array de bytes
+                            byte[] fileData = new byte[fileSize];
+                            postedFile.InputStream.Read(fileData, 0, fileSize);
+
+                            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+                            {
+                                SqlCommand sqlCommand3 = new SqlCommand();
+                                sqlCommand3.Connection = connection;
+                                sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
+                                sqlCommand3.Parameters.AddWithValue("@CodMN", CodMN);
+                                sqlCommand3.Parameters.AddWithValue("@CodImagem", int.Parse(hiddenCodImage.Value));
+
+                                sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                                sqlCommand3.CommandText = "NumiCoinUpdateImage"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                                connection.Open();
+                                sqlCommand3.ExecuteNonQuery();
+                                connection.Close();
+                            }
+                        }
+                    }
+                }
+
+
                 List<string> Values = new List<string>();
                 Values.Add(((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument);
                 Values.Add(((TextBox)e.Item.FindControl("tb_titulo")).Text);
@@ -123,31 +197,67 @@ namespace ColecaoNumismatica
                 Values.Add(((DropDownList)e.Item.FindControl("ddl_tipo")).SelectedValue);
                 Values.Add(((TextBox)e.Item.FindControl("tb_valorAtual")).Text);
 
-                SQLConnect(Values);
+                int AnswCoinExists = NumiCoinUpdateCoin(Values);
+
+                if (AnswCoinExists == 0)
+                {
+                    lbl_message.Text = "Update efetuado com sucesso!";
+                    lbl_message.CssClass = "added";
+                }
+                else if (AnswCoinExists == 1)
+                {
+                    lbl_message.Text = "Não foi possível efetuar o update porque já existe essa moeda nesse estado!";
+                    lbl_message.CssClass = "removed";
+                }
+
+                rpt_manageCoins.DataBind();
             }
 
             if (e.CommandName.Equals("imgBtn_apaga"))
             {
-                SQLConnect(((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument);
+                NumiCoinRemoveCoin(((ImageButton)e.Item.FindControl("imgBtn_apaga")).CommandArgument);
 
                 rpt_manageCoins.DataBind();
             }
+
         }
-        public static void SQLConnect(string code)
+
+        /// <summary>
+        /// Função de ItemCommand do repeater rpt_imagens apagar uma determinada imagem da BD
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        protected void rpt_imagens_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
-            SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
-            myCommand.Parameters.AddWithValue("@CodMN", code);
+            if (e.CommandName == "DeleteImage")
+            {
+                string codImageToDelete = e.CommandArgument.ToString();
 
-            myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-            myCommand.CommandText = "NumiRemoveCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+                // Your logic to delete the image associated with codImageToDelete
+                // For example, you might have a method to delete the image from the server
+                string query = "DELETE FROM NumiCoinMNImage WHERE ";
 
-            myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-            myCon.Open(); //Abrir a conexão
-            myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-            myCon.Close();
+                SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
+
+                myConn.Open();
+
+                query += "CodImagem=" + codImageToDelete;
+
+                SqlCommand myCommand = new SqlCommand(query, myConn);
+                myCommand.ExecuteNonQuery();
+                myConn.Close();
+
+                // Rebind the repeater to reflect the changes
+                rpt_manageCoins.DataBind(); // Assuming you have a method to bind data to the repeater
+            }
         }
-        public static void SQLConnect(List<string> values)
+
+        /// <summary>
+        /// Função para fazer o Update a uma Coin
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public static int NumiCoinUpdateCoin(List<string> values)
         {
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
 
@@ -167,14 +277,85 @@ namespace ColecaoNumismatica
                 myCommand.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(values[5]));
             }
 
+            SqlParameter CoinExists = new SqlParameter();
+            CoinExists.ParameterName = "@CoinExists";
+            CoinExists.Direction = ParameterDirection.Output;
+            CoinExists.SqlDbType = SqlDbType.Int;
+
+            myCommand.Parameters.Add(CoinExists);
+
             myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
             myCommand.CommandText = "NumiUpdateCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
 
             myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
             myCon.Open(); //Abrir a conexão
             myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-            myCon.Close();
 
+            myCon.Close();
+            int AnswCoinExists = Convert.ToInt32(myCommand.Parameters["@CoinExists"].Value);
+
+            return AnswCoinExists;
         }
+
+        /// <summary>
+        /// Função para Remover uma Coin
+        /// </summary>
+        /// <param name="code"></param>
+        public static void NumiCoinRemoveCoin(string code)
+        {
+            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
+            SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
+            myCommand.Parameters.AddWithValue("@CodMN", code);
+
+            myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+            myCommand.CommandText = "NumiRemoveCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+            myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+            myCon.Open(); //Abrir a conexão
+            myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+            myCon.Close();
+        }
+
+        /// <summary>
+        /// Função que retorna uma lista de ImageInfos com a ImageBase64 e o Código da Imagem
+        /// </summary>
+        /// <returns></returns>
+        public List<ImageInfo> GetImagesPerCodMN()
+        {
+            List<ImageInfo> imageList = new List<ImageInfo>();
+            string query = $"SELECT CodImagem, Imagem FROM [NumiCoinMNImage] WHERE CodMN = {Convert.ToInt32(Session["CodMN"])}";
+
+            using (SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+            {
+                SqlCommand myCommand = new SqlCommand(query, myCon);
+                myCon.Open();
+
+                SqlDataReader dr = myCommand.ExecuteReader();
+                while (dr.Read())
+                {
+                    int codImagem = Convert.ToInt32(dr["CodImagem"]);
+                    string imageBase64 = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
+                    ImageInfo imageInfo = new ImageInfo
+                    {
+                        CodImagem = codImagem,
+                        ImageBase64 = imageBase64
+                    };
+
+                    imageList.Add(imageInfo);
+                }
+            }
+
+            return imageList;
+        }
+
+        /// <summary>
+        /// Classe ImageInfo que contém o CodImagem e respetiva ImageBase64
+        /// </summary>
+        public class ImageInfo
+        {
+            public int CodImagem { get; set; }
+            public string ImageBase64 { get; set; }
+        }
+
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -18,7 +15,7 @@ namespace ColecaoNumismatica
 
             if (Session["Logado"] == null)
             {
-                Response.Redirect("NumiLoginUser.aspx");
+                Response.Redirect("NumiMainPage.aspx");
             }
             else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
             {
@@ -33,7 +30,7 @@ namespace ColecaoNumismatica
                 }
 
                 script = @"
-                            document.getElementById('navBarDropDown').classList.remove('hidden');
+                             document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
@@ -103,21 +100,29 @@ namespace ColecaoNumismatica
 
             if (e.CommandName.Equals("imgBtn_apaga"))
             {
-                string query = "DELETE FROM NumiCoinUser WHERE ";  
-                query += "CodUtilizador=" + ((ImageButton)e.Item.FindControl("imgBtn_apaga")).CommandArgument + "; ";
-                query += "DELETE FROM NumiCoinCollection WHERE ";
+                if (Convert.ToInt32(e.CommandArgument) == Convert.ToInt32(((ImageButton)e.Item.FindControl("imgBtn_apaga")).CommandArgument))
+                {
+                    lbl_message.Text = "Não é possível excluir-se a si próprio da lista de utilizadores! Solicite o auxílio de outro administrador!";
+                    lbl_message.CssClass = "removed";
+                }
+                else
+                {
+                    string query = "DELETE FROM NumiCoinUser WHERE ";
+                    query += "CodUtilizador=" + ((ImageButton)e.Item.FindControl("imgBtn_apaga")).CommandArgument + "; ";
+                    query += "DELETE FROM NumiCoinCollection WHERE ";
 
-                SqlConnection myConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
+                    SqlConnection myConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
 
-                myConnection.Open();
+                    myConnection.Open();
 
-                query+= "CodUtilizador=" + ((ImageButton)e.Item.FindControl("imgBtn_apaga")).CommandArgument;
+                    query += "CodUtilizador=" + ((ImageButton)e.Item.FindControl("imgBtn_apaga")).CommandArgument;
 
-                SqlCommand myCommand = new SqlCommand(query, myConnection);
-                myCommand.ExecuteNonQuery();
-                myConnection.Close();
+                    SqlCommand myCommand = new SqlCommand(query, myConnection);
+                    myCommand.ExecuteNonQuery();
+                    myConnection.Close();
 
-                rpt_manageUsers.DataBind();
+                    rpt_manageUsers.DataBind();
+                }
             }
 
         }

@@ -2,7 +2,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-<div style="display:flex; justify-content:center; padding:20px;">
+    <div style="display:flex; justify-content:center; padding:20px;">
 <div class="form align-content-center-md-6" style="justify-content:center;padding:5px;background-color:azure;">
   <!-- Row for Título | Tipo | Estado -->
   <div class="form-row">
@@ -52,7 +52,7 @@
       <input type="text" class="form-control" id="inputZip">
     </div>
   </div>
-  <asp:Button ID="btn_insert" runat="server" class="btn btn-primary" Text="Insert Coin" OnClick="btn_insert_Click"/><br /><br />
+  <asp:Button ID="btn_insert" runat="server" class="btn btn-primary" Text="Insert Coin" OnClick="btn_insert_Click" AutoPostBack="True"/><br /><br />
   <asp:Label ID="lbl_message" runat="server" Text=""></asp:Label>
 </div>
 </div>

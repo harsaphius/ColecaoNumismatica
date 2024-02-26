@@ -42,6 +42,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.LinkButton btn_home;
 
         /// <summary>
+        /// btn_login control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btn_login;
+
+        /// <summary>
         /// btn_mycollection control.
         /// </summary>
         /// <remarks>

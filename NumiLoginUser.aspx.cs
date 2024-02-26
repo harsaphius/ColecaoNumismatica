@@ -18,9 +18,9 @@ namespace ColecaoNumismatica
             GoogleConnect.ClientSecret = ConfigurationManager.AppSettings["clientsecret"];
             GoogleConnect.RedirectUri = ConfigurationManager.AppSettings["redirection_url"];
 
-            FaceBookConnect.API_Key = ConfigurationManager.AppSettings["facebookkey"];
-            FaceBookConnect.API_Secret = ConfigurationManager.AppSettings["facebooksecret"];
-            FaceBookConnect.Version = ConfigurationManager.AppSettings["facebookversion"];
+            FaceBookConnect.API_Key = ConfigurationManager.AppSettings["FacebookKey"];
+            FaceBookConnect.API_Secret = ConfigurationManager.AppSettings["FacebookSecret"];
+            FaceBookConnect.Version = ConfigurationManager.AppSettings["FacebookVersion"];
 
             if (Request.QueryString["redirected"] != null && Request.QueryString["redirected"] == "true")
             {
@@ -228,7 +228,7 @@ namespace ColecaoNumismatica
         protected void btn_facebook_Click(object sender, EventArgs e)
         {
             Session["Facebook"] = "Yes";
-            FaceBookConnect.Authorize("user,email", ConfigurationManager.AppSettings["redirection_url"]);
+            FaceBookConnect.Authorize("public_profile,email", ConfigurationManager.AppSettings["redirection_url"]);
         }
 
         /// <summary>

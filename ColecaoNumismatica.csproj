@@ -445,6 +445,7 @@
     <Content Include="Images\NumiCoin.png" />
     <Content Include="Images\NumiCoin_C.png" />
     <Content Include="NumiChangePassword.aspx" />
+    <Content Include="NumiCoinTerms.aspx" />
     <Content Include="NumiGeneralPageError.aspx" />
     <Content Include="NumiInsertNewCoin.aspx" />
     <Content Include="NumiLoginUser.aspx" />
@@ -463,8 +464,6 @@
     <Compile Include="Classes\FaceBookUser.cs" />
     <Compile Include="Classes\GoogleProfile.cs" />
     <Compile Include="Classes\MyFunctions.cs" />
-    <Compile Include="Classes\TokenClass.cs" />
-    <Compile Include="Classes\UserClass.cs" />
     <Compile Include="NumiAtivationPage.aspx.cs">
       <DependentUpon>NumiAtivationPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -478,6 +477,13 @@
     </Compile>
     <Compile Include="NumiChangePassword.aspx.designer.cs">
       <DependentUpon>NumiChangePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NumiCoinTerms.aspx.cs">
+      <DependentUpon>NumiCoinTerms.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NumiCoinTerms.aspx.designer.cs">
+      <DependentUpon>NumiCoinTerms.aspx</DependentUpon>
     </Compile>
     <Compile Include="NumiGeneralPageError.aspx.cs">
       <DependentUpon>NumiGeneralPageError.aspx</DependentUpon>

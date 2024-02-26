@@ -15,7 +15,7 @@ namespace ColecaoNumismatica
 
             if (Session["Logado"] == null)
             {
-                Response.Redirect("NumiLoginUser.aspx");
+                Response.Redirect("NumiMainPage.aspx");
             }
             else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
             {

@@ -79,3 +79,9 @@ RegisterAccountFE
     border: inset;
     padding: 2px;
 }
+
+@media only screen and (max-width: 768px) {
+    .responsive-table {
+        width: 100%;
+    }
+}

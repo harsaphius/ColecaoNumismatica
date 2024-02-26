@@ -17,16 +17,18 @@
 <body>
     <form id="form1" runat="server">
       <nav class="navbar navbar-expand-sm navbar-light bg-primary"> 
-          <a class="navbar-brand text-white" href="#">NumiCoin</a>
-              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+          <a class="navbar-brand text-white">NumiCoin</a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
               </button>
+
           <div class="collapse navbar-collapse" id="menu">
                 <ul class="navbar-nav mr-auto">
                    <li class="nav-item dropdown">                
                         <div class="nav-link dropdown-toggle text-white hidden" type="button" id="navBarDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Menu</div>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                                 <asp:LinkButton ID="btn_home" runat="server" class="dropdown-item hidden" OnClick="btn_home_Click" CausesValidation="False">Home</asp:LinkButton>
+                                <asp:LinkButton ID="btn_login" runat="server" class="dropdown-item hidden" OnClick="btn_login_Click" CausesValidation="False">Login</asp:LinkButton>
                                 <asp:LinkButton ID="btn_mycollection" runat="server" class="dropdown-item hidden" OnClick="btn_mycollection_Click" CausesValidation="False">My Collection</asp:LinkButton>
                                 <asp:LinkButton ID="btn_alterarpw" runat="server" class="dropdown-item hidden" OnClick="btn_alterarpw_Click" CausesValidation="False">Alterar PW</asp:LinkButton>
                                 <div id="divider1" class="dropdown-divider hidden"></div>

@@ -15,11 +15,22 @@ namespace ColecaoNumismatica
 
         }
 
+        /// <summary>
+        /// Botão de Logout do Website - Reencaminha para a Main Page
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void btn_logout_Click(object sender, EventArgs e)
         {
-            Response.Redirect("NumiLoginUser.aspx");
+            Session["Logado"] = null;
+            Response.Redirect("NumiMainPage.aspx");
         }
 
+        /// <summary>
+        /// Botão de Home do Website - Reencaminha para a Main Page
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void btn_home_Click(object sender, EventArgs e)
         {
             Response.Redirect("NumiMainPage.aspx");
@@ -99,6 +110,11 @@ namespace ColecaoNumismatica
         protected void btn_search_Click(object sender, EventArgs e)
         {
             BtnSearchInMasterPage?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected void btn_login_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("NumiLoginUser.aspx");
         }
     }
 }

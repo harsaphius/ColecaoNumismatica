@@ -69,6 +69,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.LinkButton lbtn_previous;
 
         /// <summary>
+        /// lbl_pageNumber control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbl_pageNumber;
+
+        /// <summary>
         /// lbtn_next control.
         /// </summary>
         /// <remarks>
@@ -94,24 +103,6 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
-
-        /// <summary>
-        /// lbl_estadoModal control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl_estadoModal;
-
-        /// <summary>
-        /// lbl_valorAtual control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl_valorAtual;
 
         /// <summary>
         /// tb_quantidade control.
@@ -148,14 +139,5 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btn_add;
-
-        /// <summary>
-        /// btn_remove control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn_remove;
     }
 }

@@ -51,7 +51,7 @@
                   <div class="form-check justify-content-center mb-5">
                     <input class="form-check-input me-2" type="checkbox" value="" id="chkBoxAccept" runat="server"/>
                     <label class="form-check-label" for="chkBoxAccept">
-                      I agree all statements in <a href="#!">Terms of service</a>
+                      I agree all statements in <a href="NumiCoinTerms.aspx">Terms of service</a>
                     </label>
                   </div>
 
