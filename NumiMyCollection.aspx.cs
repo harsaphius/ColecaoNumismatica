@@ -50,7 +50,6 @@ namespace ColecaoNumismatica
                 script = @"
                             document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
-                            document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
                             document.getElementById('searchbar').classList.add('d-flex');
                             document.getElementById('searchbar').classList.remove('hidden');
@@ -118,7 +117,6 @@ namespace ColecaoNumismatica
 
             }
         }
-
         protected void rpt_mycollection_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName.Equals("lbtn_plus"))
@@ -208,8 +206,6 @@ namespace ColecaoNumismatica
                 rpt_mycollection.DataBind();
             }
         }
-
-
         protected List<Money> MyCollection()
         {
             List<Money> LstMoney = new List<Money>();
@@ -244,7 +240,6 @@ namespace ColecaoNumismatica
             return LstMoney;
 
         }
-
         protected int HasCollection(int user)
         {
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
@@ -309,6 +304,47 @@ namespace ColecaoNumismatica
             ListO.Add(AnswCodEstado);
 
             return ListO;
+        }
+
+        public int PageNumberCount
+        {
+            get
+            {
+                if (ViewState["PageNumber"] != null) return Convert.ToInt32(ViewState["PageNumber"]);
+                else return 0;
+            }
+            set
+            {
+                ViewState["PageNumber"] = value;
+            }
+        }
+        protected void BindData()
+        {
+            List<Money> LstMoney = Session["LstMoney"] as List<Money>;
+
+            PagedDataSource pagedDataSource = new PagedDataSource();
+            pagedDataSource.DataSource = LstMoney;
+            pagedDataSource.AllowPaging = true;
+            pagedDataSource.PageSize = 6;
+            pagedDataSource.CurrentPageIndex = PageNumberCount;
+            int PageNumber = PageNumberCount + 1;
+            lbl_pageNumber.Text = (PageNumber).ToString();
+
+            rpt_mycollection.DataSource = pagedDataSource;
+            rpt_mycollection.DataBind();
+
+            lbtn_previous.Enabled = !pagedDataSource.IsFirstPage;
+            lbtn_next.Enabled = !pagedDataSource.IsLastPage;
+        }
+        protected void lbtn_previous_Click(object sender, EventArgs e)
+        {
+            PageNumberCount -= 1;
+            BindData();
+        }
+        protected void lbtn_next_Click(object sender, EventArgs e)
+        {
+            PageNumberCount += 1;
+            BindData();
         }
 
         /// <summary>
@@ -431,50 +467,6 @@ namespace ColecaoNumismatica
                 // Return the merged PDF as a byte array
                 return ms.ToArray();
             }
-        }
-
-
-        public int PageNumberCount
-        {
-            get
-            {
-                if (ViewState["PageNumber"] != null) return Convert.ToInt32(ViewState["PageNumber"]);
-                else return 0;
-            }
-            set
-            {
-                ViewState["PageNumber"] = value;
-            }
-        }
-
-        protected void BindData()
-        {
-            List<Money> LstMoney = Session["LstMoney"] as List<Money>;
-
-            PagedDataSource pagedDataSource = new PagedDataSource();
-            pagedDataSource.DataSource = LstMoney;
-            pagedDataSource.AllowPaging = true;
-            pagedDataSource.PageSize = 8;
-            pagedDataSource.CurrentPageIndex = PageNumberCount;
-            int PageNumber = PageNumberCount + 1;
-            lbl_pageNumber.Text = (PageNumber).ToString();
-
-            rpt_mycollection.DataSource = pagedDataSource;
-            rpt_mycollection.DataBind();
-
-            lbtn_previous.Enabled = !pagedDataSource.IsFirstPage;
-            lbtn_next.Enabled = !pagedDataSource.IsLastPage;
-        }
-
-        protected void lbtn_previous_Click(object sender, EventArgs e)
-        {
-            PageNumberCount -= 1;
-            BindData();
-        }
-        protected void lbtn_next_Click(object sender, EventArgs e)
-        {
-            PageNumberCount += 1;
-            BindData();
         }
     }
 }

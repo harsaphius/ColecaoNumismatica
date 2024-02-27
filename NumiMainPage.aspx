@@ -3,8 +3,15 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <div id="messageAR" class="hidden">
-        <asp:Label ID="lbl_message" runat="server" Text=""></asp:Label></div>
+    <div id="messageAR" class="hidden"><asp:Label ID="lbl_message" runat="server" Text=""></asp:Label></div>
+<div class="container">
+<div class="row">
+    <div class="col-lg">
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg">
         <div class="selectpicker" style="display:flex;justify-content:center;padding:10px">
             <asp:DropDownList ID="ddl_tipo" runat="server" DataSourceID="SQLDSTipo" DataTextField="Tipo" DataValueField="CodTipoMN" AutoPostBack="true" AppendDataBoundItems="true"></asp:DropDownList>
             <asp:SqlDataSource ID="SQLDSTipo" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT * FROM [NumiCoinMNType]"></asp:SqlDataSource>
@@ -41,7 +48,7 @@
                 </div>
             </ItemTemplate>
             <AlternatingItemTemplate>
-                <div class="col-lg-3 col-sm-6 card" style="background-color: ghostwhite; height:300px; min-width:250px; padding: 10px; margin: 1px; text-align: center">
+                <div class="col-xl-2 col-lg-3 col-sm-6 card" style="background-color: ghostwhite; height:300px; min-width:250px; padding: 10px; margin: 1px; text-align: center">
                     <div><b>
                         <asp:LinkButton href='<%# "NumiMoneyDetail.aspx?id=" + Eval("cod") + "&estado=" + Eval("estado") %>' ID="lbl_titulo" runat="server" Text=""><%# Eval("titulo") %></asp:LinkButton>
                     </b></div>
@@ -71,8 +78,9 @@
         <asp:Label ID="lbl_pageNumber" runat="server"></asp:Label>&nbsp;&nbsp;
         <asp:LinkButton ID="lbtn_next" runat="server" OnClick="lbtn_next_Click">Next</asp:LinkButton>
     </div>
-
-
+</div>
+</div>
+</div>
 <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
  <!--Modal -->
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">

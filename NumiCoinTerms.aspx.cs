@@ -11,12 +11,18 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if(Session["Registo"] == null)
+            {
+                Response.Redirect("NumiRegisterUser.aspx");
+            }
+            else { 
             string script = @"                      
                             document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_login').classList.remove('hidden');";
 
             Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+            }
         }
     }
 }

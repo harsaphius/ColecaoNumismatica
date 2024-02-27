@@ -14,7 +14,7 @@ body {
     content: "";
     flex: 1;
     height: 1px;
-    background: #c86e6e;
+    background: #5f8ead;
 }
 
 .h-custom {
@@ -78,10 +78,4 @@ RegisterAccountFE
     color: darkgoldenrod;
     border: inset;
     padding: 2px;
-}
-
-@media only screen and (max-width: 768px) {
-    .responsive-table {
-        width: 100%;
-    }
 }

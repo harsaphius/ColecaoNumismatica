@@ -20,7 +20,8 @@
                     <i class="fa fa-user fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
                       <asp:TextBox ID="tb_user" runat="server" class="form-control" placeholder="Utilizador"></asp:TextBox>
-                      <label class="form-label" for="tb_username">Introduza o utilizador</label>
+                        <asp:RequiredFieldValidator ID="rfv_user" runat="server" ErrorMessage="Utilizador Obrigatório" ControlToValidate="tb_user" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                        <label class="form-label" for="tb_user">Introduza o utilizador</label>
                     </div>
                   </div>
 
@@ -28,6 +29,8 @@
                     <i class="fa fa-envelope fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
                       <asp:TextBox ID="tb_email" runat="server" class="form-control" TextMode="Email" placeholder="E-mail"></asp:TextBox>
+                      <asp:RequiredFieldValidator ID="rfv_email" runat="server" ErrorMessage="Email Obrigatório" ControlToValidate="tb_email" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                      <asp:RegularExpressionValidator ID="rev_email" runat="server" ErrorMessage="E-mail no Formato Incorreto" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="tb_email" Text="*" ForeColor="Blue"></asp:RegularExpressionValidator>
                       <label class="form-label" for="tb_email">Introduza o e-mail</label>
                     </div>
                   </div>
@@ -36,6 +39,7 @@
                     <i class="fa fa-lock fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
                       <asp:TextBox ID="tb_pw" runat="server" class="form-control" TextMode="Password" placeholder="Password"></asp:TextBox>
+                      <asp:RequiredFieldValidator ID="rfv_pw" runat="server" ErrorMessage="Password Obrigatória" ControlToValidate="tb_pw" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
                       <label class="form-label" for="tb_password">Introduza a password</label>
                     </div>
                   </div>
@@ -44,6 +48,7 @@
                     <i class="fa fa-key fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
                       <asp:TextBox ID="tb_pwn" runat="server" class="form-control" TextMode="Password" placeholder="Repita a Password"></asp:TextBox>
+                      <asp:RequiredFieldValidator ID="rfv_pwn" runat="server" ErrorMessage="Repetição da Password Obrigatória" ControlToValidate="tb_pwn" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
                       <label class="form-label" for="tb_passwordn">Repita a Password</label>
                     </div>
                   </div>
@@ -59,13 +64,13 @@
 
                   <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                       <asp:Button ID="btn_registar" runat="server" Text="Registar" class="btn btn-primary btn-lg" OnClick="btn_registar_Click" />
-                      </div>        
-
+                  </div>        
+                    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ForeColor="Red" DisplayMode="List"/>
                 </div>
 
                 </div>
               <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                <img src="..\Images\NumiCoin.png" class="img-fluid" alt="Cinel Logo">
+              <img src="..\Images\NumiCoin.png" class="img-fluid" alt="Cinel Logo">
               </div>
             </div>
           </div>

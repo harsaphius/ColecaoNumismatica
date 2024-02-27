@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -36,8 +37,6 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
-                            document.getElementById('searchbar').classList.add('d-flex');
-                            document.getElementById('searchbar').classList.remove('hidden');
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
@@ -46,7 +45,6 @@ namespace ColecaoNumismatica
                 if (isAdmin == "Yes")
                 {
                     script = @"
-                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
                              document.getElementById('divider1').classList.remove('hidden');
                              document.getElementById('divider2').classList.remove('hidden');
                              document.getElementById('divider3').classList.remove('hidden');
@@ -62,137 +60,134 @@ namespace ColecaoNumismatica
 
         protected void btn_insert_Click(object sender, EventArgs e)
         {
-            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
-            SqlCommand myCommand = new SqlCommand(); //Novo commando SQL
+            string valorAtual = tb_valorAtual.Text.Trim();
+            bool isValidDecimal = valorAtual.All(c => char.IsDigit(c) || c == '.' || c == ',');
 
-            myCommand.Parameters.AddWithValue("@Titulo", tb_titulo.Text);
-            myCommand.Parameters.AddWithValue("@CodTipoMN", ddl_tipo.SelectedValue);
-            myCommand.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
-            myCommand.Parameters.AddWithValue("@Descricao", tb_descricao.Text);
-            myCommand.Parameters.AddWithValue("@ValorCunho", tb_valorCunho.Text);
-
-            //Devolver o código da moeda/nota
-            SqlParameter CodMN = new SqlParameter();
-            CodMN.ParameterName = "@CodMN";
-            CodMN.Direction = ParameterDirection.Output;
-            CodMN.SqlDbType = SqlDbType.Int;
-
-            myCommand.Parameters.Add(CodMN);
-
-            SqlParameter CoinStateExists = new SqlParameter();
-            CoinStateExists.ParameterName = "@CoinStateExists";
-            CoinStateExists.Direction = ParameterDirection.Output;
-            CoinStateExists.SqlDbType = SqlDbType.Int;
-
-            myCommand.Parameters.Add(CoinStateExists);
-
-            myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-            myCommand.CommandText = "NumiInsertCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-            myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-            myCon.Open(); //Abrir a conexão
-            myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-
-            int AnswCodMN = Convert.ToInt32(myCommand.Parameters["@CodMN"].Value);
-            int AnswCoinStateExists = Convert.ToInt32(myCommand.Parameters["@CoinStateExists"].Value);
-
-            if (AnswCoinStateExists == 1)
+            if (isValidDecimal)
             {
-                lbl_message.Text = "Money já existente no estado pretendido!";
-                lbl_message.CssClass = "removed";
-            }
-            else
-            {
-                //Insert Coin State
-                SqlCommand sqlCommand2 = new SqlCommand();
+                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
+                SqlCommand myCommand = new SqlCommand(); //Novo commando SQL
 
-                sqlCommand2.Connection = myCon;
-                sqlCommand2.Parameters.AddWithValue("@CodMN", AnswCodMN);
-                sqlCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
-                if (tb_valorAtual.Text.Contains("."))
+                myCommand.Parameters.AddWithValue("@Titulo", tb_titulo.Text);
+                myCommand.Parameters.AddWithValue("@CodTipoMN", ddl_tipo.SelectedValue);
+                myCommand.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
+                myCommand.Parameters.AddWithValue("@Descricao", tb_descricao.Text);
+                myCommand.Parameters.AddWithValue("@ValorCunho", tb_valorCunho.Text);
+
+                //Devolver o código da moeda/nota
+                SqlParameter CodMN = new SqlParameter();
+                CodMN.ParameterName = "@CodMN";
+                CodMN.Direction = ParameterDirection.Output;
+                CodMN.SqlDbType = SqlDbType.Int;
+
+                myCommand.Parameters.Add(CodMN);
+
+                SqlParameter CoinStateExists = new SqlParameter();
+                CoinStateExists.ParameterName = "@CoinStateExists";
+                CoinStateExists.Direction = ParameterDirection.Output;
+                CoinStateExists.SqlDbType = SqlDbType.Int;
+
+                myCommand.Parameters.Add(CoinStateExists);
+
+                myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                myCommand.CommandText = "NumiInsertCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                myCon.Open(); //Abrir a conexão
+                myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+
+                int AnswCodMN = Convert.ToInt32(myCommand.Parameters["@CodMN"].Value);
+                int AnswCoinStateExists = Convert.ToInt32(myCommand.Parameters["@CoinStateExists"].Value);
+
+                if (AnswCoinStateExists == 1)
                 {
-                    tb_valorAtual.Text = tb_valorAtual.Text.Replace(".", ",");
-                    sqlCommand2.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(tb_valorAtual.Text));
+                    lbl_message.Text = "Money já existente no estado pretendido!";
+                    lbl_message.CssClass = "removed";
                 }
                 else
                 {
-                    sqlCommand2.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(tb_valorAtual.Text));
-                }
+                    //Insert Coin State
+                    SqlCommand sqlCommand2 = new SqlCommand();
 
-                sqlCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                sqlCommand2.CommandText = "NumiCoinStateMNInsert"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                sqlCommand2.ExecuteNonQuery();
-                myCon.Close();
-
-                //Insert Coin MNImage
-                //Imagens
-                foreach (HttpPostedFile postedFile in fu_imagens.PostedFiles)
-                {
-                    string fileName = Path.GetFileName(postedFile.FileName);
-                    string fileContentType = postedFile.ContentType;
-                    int fileSize = postedFile.ContentLength;
-
-                    // Ler o conteúdo do ficheiro para o array de bytes
-                    byte[] fileData = new byte[fileSize];
-                    postedFile.InputStream.Read(fileData, 0, fileSize);
-
-                    //Gravar o ficheiro na base de dados
-                    using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+                    sqlCommand2.Connection = myCon;
+                    sqlCommand2.Parameters.AddWithValue("@CodMN", AnswCodMN);
+                    sqlCommand2.Parameters.AddWithValue("@CodEstado", ddl_estado.SelectedValue);
+                    if (tb_valorAtual.Text.Contains("."))
                     {
-                        SqlCommand sqlCommand3 = new SqlCommand();
-                        sqlCommand3.Connection = connection;
-
-                        if ((fu_imagens.HasFile))
-                        {
-                            sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
-                        }
-                        else
-                        {
-                            string imagePath = "C:\\Users\\pcris\\source\\repos\\ColecaoNumismatica\\Images\\NumiDefault.png";
-
-                            // Read the image file into a byte array
-                            byte[] binaryData;
-                            using (FileStream fileStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
-                            {
-                                binaryData = new byte[fileStream.Length];
-                                fileStream.Read(binaryData, 0, (int)fileStream.Length);
-                            }
-
-                            sqlCommand3.Parameters.AddWithValue("@Imagem", binaryData);
-                        }
-
-                        sqlCommand3.Parameters.AddWithValue("@CodMN", AnswCodMN);
-
-                        sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                        sqlCommand3.CommandText = "NumiCoinInsertImage"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                        connection.Open();
-                        sqlCommand3.ExecuteNonQuery();
-                        connection.Close();
+                        tb_valorAtual.Text = tb_valorAtual.Text.Replace(".", ",");
+                        sqlCommand2.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(tb_valorAtual.Text));
+                    }
+                    else
+                    {
+                        sqlCommand2.Parameters.AddWithValue("@ValorAtual", Convert.ToDecimal(tb_valorAtual.Text));
                     }
 
+                    sqlCommand2.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                    sqlCommand2.CommandText = "NumiCoinStateMNInsert"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                    sqlCommand2.ExecuteNonQuery();
+                    myCon.Close();
+
+                    //Insert Coin MNImage
+                    //Imagens
+                    foreach (HttpPostedFile postedFile in fu_imagens.PostedFiles)
+                    {
+                        string fileName = Path.GetFileName(postedFile.FileName);
+                        string fileContentType = postedFile.ContentType;
+                        int fileSize = postedFile.ContentLength;
+
+                        // Ler o conteúdo do ficheiro para o array de bytes
+                        byte[] fileData = new byte[fileSize];
+                        postedFile.InputStream.Read(fileData, 0, fileSize);
+
+                        //Gravar o ficheiro na base de dados
+                        using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+                        {
+                            SqlCommand sqlCommand3 = new SqlCommand();
+                            sqlCommand3.Connection = connection;
+
+                            if ((fu_imagens.HasFile))
+                            {
+                                sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
+                            }
+                            else
+                            {
+                                string imagePath = "C:\\Users\\pcris\\source\\repos\\ColecaoNumismatica\\Images\\NumiDefault.png";
+
+                                // Read the image file into a byte array
+                                byte[] binaryData;
+                                using (FileStream fileStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
+                                {
+                                    binaryData = new byte[fileStream.Length];
+                                    fileStream.Read(binaryData, 0, (int)fileStream.Length);
+                                }
+
+                                sqlCommand3.Parameters.AddWithValue("@Imagem", binaryData);
+                            }
+
+                            sqlCommand3.Parameters.AddWithValue("@CodMN", AnswCodMN);
+
+                            sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                            sqlCommand3.CommandText = "NumiCoinInsertImage"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                            connection.Open();
+                            sqlCommand3.ExecuteNonQuery();
+                            connection.Close();
+                        }
+
+                    }
+
+                    myCon.Close();
+
+                    lbl_message.Text = "Money inserido com sucesso!";
+                    lbl_message.CssClass = "added";
                 }
-
-                myCon.Close();
-
-                lbl_message.Text = "Money inserido com sucesso!";
-                lbl_message.CssClass = "added";
             }
-        }
-
-        private void ClearInputFields()
-        {
-            // Clear the text of TextBoxes
-            tb_titulo.Text = "";
-            tb_descricao.Text = "";
-            // Clear the selection of DropDownList
-            ddl_estado.SelectedIndex = 0;
-            ddl_tipo.SelectedIndex = 0;
-            tb_descricao.Text = "";
-            tb_valorCunho.Text = "";
-
-            // Clear any other input fields as needed
+            else
+            {
+                lbl_message.Text = "Please enter a valid decimal number.";
+                lbl_message.CssClass = "removed";
+            }
         }
     }
 }

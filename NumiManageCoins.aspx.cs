@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -53,7 +54,6 @@ namespace ColecaoNumismatica
                              document.getElementById('divider1').classList.remove('hidden');
                              document.getElementById('divider2').classList.remove('hidden');
                              document.getElementById('divider3').classList.remove('hidden');
-                             document.getElementById('btn_manageCoins').classList.remove('hidden');
                              document.getElementById('btn_manageUsers').classList.remove('hidden');
                              document.getElementById('btn_statistics').classList.remove('hidden');
                              document.getElementById('btn_registerNewUser').classList.remove('hidden');";
@@ -115,53 +115,20 @@ namespace ColecaoNumismatica
         {
             if (e.CommandName.Equals("imgBtn_grava"))
             {
-                int CodMN = Convert.ToInt32(e.CommandArgument);
+                string valorAtual = ((TextBox)e.Item.FindControl("tb_valorAtual")).Text.Trim();
+                bool isValidDecimal = valorAtual.All(c => char.IsDigit(c) || c == '.' || c == ',');
 
-                FileUpload fileUploadInner = (FileUpload)e.Item.FindControl("fileUploadNewImage");
-
-                if (fileUploadInner.HasFile)
+                if (isValidDecimal)
                 {
-                    foreach (HttpPostedFile postedFile in fileUploadInner.PostedFiles)
+                    int CodMN = Convert.ToInt32(e.CommandArgument);
+
+                    FileUpload fileUploadInner = (FileUpload)e.Item.FindControl("fileUploadNewImage");
+
+                    if (fileUploadInner.HasFile)
                     {
-                        string fileName = Path.GetFileName(postedFile.FileName);
-                        string fileContentType = postedFile.ContentType;
-                        int fileSize = postedFile.ContentLength;
-
-                        // Ler o conteúdo do ficheiro para o array de bytes
-                        byte[] fileData = new byte[fileSize];
-                        postedFile.InputStream.Read(fileData, 0, fileSize);
-
-                        //Gravar o ficheiro na base de dados
-                        using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+                        foreach (HttpPostedFile postedFile in fileUploadInner.PostedFiles)
                         {
-                            SqlCommand sqlCommand3 = new SqlCommand();
-                            sqlCommand3.Connection = connection;
-
-                            sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
-                            sqlCommand3.Parameters.AddWithValue("@CodMN", CodMN);
-
-                            sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                            sqlCommand3.CommandText = "NumiCoinInsertImage"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-                            connection.Open();
-                            sqlCommand3.ExecuteNonQuery();
-                            connection.Close();
-                        }
-                    }
-                }
-
-                Repeater rpt_imagens = (Repeater)e.Item.FindControl("rpt_imagens");
-
-                foreach (RepeaterItem item in rpt_imagens.Items)
-                {
-                    FileUpload fileUpload = (FileUpload)item.FindControl("fileUploadInner");
-                    HiddenField hiddenCodImage = (HiddenField)item.FindControl("hiddenCodImage");
-
-                    if (fileUpload.HasFile)
-                    {
-                        foreach (HttpPostedFile postedFile in fileUpload.PostedFiles)
-                        {
-                            string fileName = postedFile.FileName;
+                            string fileName = Path.GetFileName(postedFile.FileName);
                             string fileContentType = postedFile.ContentType;
                             int fileSize = postedFile.ContentLength;
 
@@ -169,16 +136,17 @@ namespace ColecaoNumismatica
                             byte[] fileData = new byte[fileSize];
                             postedFile.InputStream.Read(fileData, 0, fileSize);
 
+                            //Gravar o ficheiro na base de dados
                             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
                             {
                                 SqlCommand sqlCommand3 = new SqlCommand();
                                 sqlCommand3.Connection = connection;
+
                                 sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
                                 sqlCommand3.Parameters.AddWithValue("@CodMN", CodMN);
-                                sqlCommand3.Parameters.AddWithValue("@CodImagem", int.Parse(hiddenCodImage.Value));
 
                                 sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-                                sqlCommand3.CommandText = "NumiCoinUpdateImage"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+                                sqlCommand3.CommandText = "NumiCoinInsertImage"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
 
                                 connection.Open();
                                 sqlCommand3.ExecuteNonQuery();
@@ -186,31 +154,73 @@ namespace ColecaoNumismatica
                             }
                         }
                     }
+
+                    Repeater rpt_imagens = (Repeater)e.Item.FindControl("rpt_imagens");
+
+                    foreach (RepeaterItem item in rpt_imagens.Items)
+                    {
+                        FileUpload fileUpload = (FileUpload)item.FindControl("fileUploadInner");
+                        HiddenField hiddenCodImage = (HiddenField)item.FindControl("hiddenCodImage");
+
+                        if (fileUpload.HasFile)
+                        {
+                            foreach (HttpPostedFile postedFile in fileUpload.PostedFiles)
+                            {
+                                string fileName = postedFile.FileName;
+                                string fileContentType = postedFile.ContentType;
+                                int fileSize = postedFile.ContentLength;
+
+                                // Ler o conteúdo do ficheiro para o array de bytes
+                                byte[] fileData = new byte[fileSize];
+                                postedFile.InputStream.Read(fileData, 0, fileSize);
+
+                                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString))
+                                {
+                                    SqlCommand sqlCommand3 = new SqlCommand();
+                                    sqlCommand3.Connection = connection;
+                                    sqlCommand3.Parameters.AddWithValue("@Imagem", fileData);
+                                    sqlCommand3.Parameters.AddWithValue("@CodMN", CodMN);
+                                    sqlCommand3.Parameters.AddWithValue("@CodImagem", int.Parse(hiddenCodImage.Value));
+
+                                    sqlCommand3.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                                    sqlCommand3.CommandText = "NumiCoinUpdateImage"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                                    connection.Open();
+                                    sqlCommand3.ExecuteNonQuery();
+                                    connection.Close();
+                                }
+                            }
+                        }
+                    }
+
+                    List<string> Values = new List<string>();
+                    Values.Add(((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument);
+                    Values.Add(((TextBox)e.Item.FindControl("tb_titulo")).Text);
+                    Values.Add(((TextBox)e.Item.FindControl("tb_descricao")).Text);
+                    Values.Add(((DropDownList)e.Item.FindControl("ddl_estado")).SelectedValue);
+                    Values.Add(((DropDownList)e.Item.FindControl("ddl_tipo")).SelectedValue);
+                    Values.Add(((TextBox)e.Item.FindControl("tb_valorAtual")).Text);
+
+                    int AnswCoinExists = NumiCoinUpdateCoin(Values);
+
+                    if (AnswCoinExists == 0)
+                    {
+                        lbl_message.Text = "Update efetuado com sucesso!";
+                        lbl_message.CssClass = "added";
+                    }
+                    else if (AnswCoinExists == 1)
+                    {
+                        lbl_message.Text = "Não foi possível efetuar o update porque já existe essa moeda nesse estado!";
+                        lbl_message.CssClass = "removed";
+                    }
+                    
+                    rpt_manageCoins.DataBind();
                 }
-
-
-                List<string> Values = new List<string>();
-                Values.Add(((ImageButton)e.Item.FindControl("imgBtn_grava")).CommandArgument);
-                Values.Add(((TextBox)e.Item.FindControl("tb_titulo")).Text);
-                Values.Add(((TextBox)e.Item.FindControl("tb_descricao")).Text);
-                Values.Add(((DropDownList)e.Item.FindControl("ddl_estado")).SelectedValue);
-                Values.Add(((DropDownList)e.Item.FindControl("ddl_tipo")).SelectedValue);
-                Values.Add(((TextBox)e.Item.FindControl("tb_valorAtual")).Text);
-
-                int AnswCoinExists = NumiCoinUpdateCoin(Values);
-
-                if (AnswCoinExists == 0)
+                else
                 {
-                    lbl_message.Text = "Update efetuado com sucesso!";
-                    lbl_message.CssClass = "added";
-                }
-                else if (AnswCoinExists == 1)
-                {
-                    lbl_message.Text = "Não foi possível efetuar o update porque já existe essa moeda nesse estado!";
+                    lbl_message.Text = "Valor Atual deve ser um decimal";
                     lbl_message.CssClass = "removed";
-                }
-
-                rpt_manageCoins.DataBind();
+                }    
             }
 
             if (e.CommandName.Equals("imgBtn_apaga"))
@@ -259,6 +269,7 @@ namespace ColecaoNumismatica
         /// <returns></returns>
         public static int NumiCoinUpdateCoin(List<string> values)
         {
+
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
 
             SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
@@ -295,6 +306,7 @@ namespace ColecaoNumismatica
             int AnswCoinExists = Convert.ToInt32(myCommand.Parameters["@CoinExists"].Value);
 
             return AnswCoinExists;
+
         }
 
         /// <summary>

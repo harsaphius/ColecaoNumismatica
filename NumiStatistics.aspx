@@ -1,10 +1,8 @@
 ﻿<%@ Page Title="Statistics" Language="C#" MasterPageFile="~/Numismatic.Master" AutoEventWireup="true" CodeBehind="NumiStatistics.aspx.cs" Inherits="ColecaoNumismatica.NumiStatistics" %>
 <%@ Register Assembly="System.Web.DataVisualization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Namespace="System.Web.UI.DataVisualization.Charting" TagPrefix="asp" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <!-- Fact 3 - Bootstrap Brain Component -->
 <section class="bg-light py-3 py-md-5">
   <div class="container">
     <div class="row justify-content-md-center">
@@ -34,7 +32,7 @@
           <asp:SqlDataSource ID="SQLDSForChart" runat="server" ConnectionString="<%$ ConnectionStrings:NumiCoinConnectionString %>" SelectCommand="SELECT TOP 10 NCS.ValorAtual AS Valor, NCM.Titulo AS Moeda FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCS ON NCM.CodMN = NCS.CodMN ORDER BY Valor DESC;"></asp:SqlDataSource></div>
       </div>
       
-      </div>
+   </div>
     <br /><br />
       <div class="col-12 col-lg-6">
         <div class="flex-row justify-content-xl-end">
@@ -56,13 +54,13 @@
               </div>
               <div class="col-12 col-sm-6">
                 <div class="card border-0 border-bottom border-primary shadow-sm mt-lg-6 mt-xxl-8 mb-4">
-                  <div class="card-body text-center p-4 p-xxl-5">
-                    <h3 class="display-2 fw-bold mb-2"><asp:Label runat="server" ID="lbl_AvgCoins"></asp:Label></h3>
+                  <div class="card-body text-center p-6 p-xxl-4">
+                    <h4 class="display-2 fw-bold mb-2"><asp:Label runat="server" ID="lbl_AvgCoins"></asp:Label></h4>
                     <p class="fs-5 mb-0 text-secondary">Média de Moedas Por Utilizador</p>
                   </div>
                 </div>
                 <div class="card border-0 border-bottom border-primary shadow-sm">
-                  <div class="card-body text-center p-4 p-xxl-5">
+                  <div class="card-body text-center p-5 p-xxl-6">
                     <h3 class="display-5 fw-bold mb-2"><asp:Label runat="server" ID="lbl_UserCoin"></asp:Label></h3>
                     <p class="fs-5 mb-0 text-secondary">Utilizador com Mais Moedas - Quantidade de Moedas</p>
                   </div>

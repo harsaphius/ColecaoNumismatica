@@ -33,6 +33,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.TextBox tb_user;
 
         /// <summary>
+        /// rfv_user control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_user;
+
+        /// <summary>
         /// tb_email control.
         /// </summary>
         /// <remarks>
@@ -40,6 +49,24 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox tb_email;
+
+        /// <summary>
+        /// rfv_email control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_email;
+
+        /// <summary>
+        /// rev_email control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rev_email;
 
         /// <summary>
         /// tb_pw control.
@@ -51,6 +78,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.TextBox tb_pw;
 
         /// <summary>
+        /// rfv_pw control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_pw;
+
+        /// <summary>
         /// tb_pwn control.
         /// </summary>
         /// <remarks>
@@ -58,6 +94,15 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox tb_pwn;
+
+        /// <summary>
+        /// rfv_pwn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_pwn;
 
         /// <summary>
         /// chkBoxAccept control.
@@ -76,5 +121,14 @@ namespace ColecaoNumismatica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btn_registar;
+
+        /// <summary>
+        /// ValidationSummary1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
     }
 }

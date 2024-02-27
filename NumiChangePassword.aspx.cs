@@ -32,9 +32,6 @@ namespace ColecaoNumismatica
                             document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
-                            document.getElementById('btn_alterarpw').classList.remove('hidden');
-                            document.getElementById('searchbar').classList.add('d-flex');
-                            document.getElementById('searchbar').classList.remove('hidden');
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 

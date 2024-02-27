@@ -33,8 +33,6 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
-                            document.getElementById('searchbar').classList.add('d-flex');
-                            document.getElementById('searchbar').classList.remove('hidden');
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
@@ -55,6 +53,7 @@ namespace ColecaoNumismatica
                     Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
                 }
 
+                //SP para estatísticas
                 SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
                 SqlCommand myCommand = new SqlCommand();
 
@@ -76,7 +75,7 @@ namespace ColecaoNumismatica
                 AvgCoinsPerUser.ParameterName = "@AvgCoinsPerUser";
                 AvgCoinsPerUser.Direction = ParameterDirection.Output;
                 AvgCoinsPerUser.SqlDbType = SqlDbType.Decimal;
-                AvgCoinsPerUser.Precision = 18;
+                AvgCoinsPerUser.Precision = 8;
                 AvgCoinsPerUser.Scale = 2;
 
                 myCommand.Parameters.Add(AvgCoinsPerUser);

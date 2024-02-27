@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.Script.Serialization;
+using System.Web.UI.WebControls;
 
 namespace ColecaoNumismatica
 {
@@ -14,18 +15,57 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string script = @"                      
+            if (Session["Logado"] == null)
+            {
+                string script = @"                      
                             document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_login').classList.remove('hidden');";
 
-            Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+            }
+            else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
+            {
+                string isAdmin = Session["Admin"].ToString();
+                string user = Session["User"].ToString();
+                string script;
 
+                Label lblMessage = Master.FindControl("lbl_message") as Label;
+
+                if (lblMessage != null)
+                {
+                    lblMessage.Text = "Bem-vindo " + user;
+                }
+
+                script = @"
+                             document.getElementById('navBarDropDown').classList.remove('hidden');
+                            document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('btn_mycollection').classList.remove('hidden');
+                            document.getElementById('btn_alterarpw').classList.remove('hidden');
+                            document.getElementById('btn_logout').classList.remove('hidden');
+                            document.getElementById('Admin').classList.remove('hidden');";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+
+                if (isAdmin == "Yes")
+                {
+                    script = @"
+                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                             document.getElementById('divider1').classList.remove('hidden');
+                             document.getElementById('divider2').classList.remove('hidden');
+                             document.getElementById('divider3').classList.remove('hidden');
+                             document.getElementById('btn_manageCoins').classList.remove('hidden');
+                             document.getElementById('btn_manageUsers').classList.remove('hidden');
+                             document.getElementById('btn_statistics').classList.remove('hidden')";
+
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
+                }
+            }
             if (!IsPostBack)
             {
                 if (!string.IsNullOrEmpty(Request.QueryString["code"]))
                 {
-                    string email, subject, body, utilizador="";
+                    string email, subject, body, utilizador = "";
 
                     if (Session["Google"] != null)
                     {
@@ -136,6 +176,8 @@ namespace ColecaoNumismatica
         {
             if (chkBoxAccept.Checked == true)
             {
+                Session["Registo"] = "Yes";
+
                 string email, body, subject;
 
                 SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados

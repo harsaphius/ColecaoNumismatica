@@ -15,13 +15,11 @@ namespace ColecaoNumismatica
             string isAdmin, user, script;
             List<Money> LstMoney = new List<Money>();
 
-            if (Master is Numismatic masterPage)
+            if (Session["Logado"] == null && !Page.IsPostBack) //Página carregada inicialmente sem login
             {
-                masterPage.BtnSearchInMasterPage += Master_BtnSearchInMasterPage;
-            }
+                ddl_preco.Items.Insert(0, new ListItem("Todos", "0"));
+                ddl_tipo.Items.Insert(0, new ListItem("Todos", "0"));
 
-            if (Session["Logado"] == null || Session["Logado"].ToString() == "No")
-            {
                 script = @"
                             document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
@@ -33,8 +31,23 @@ namespace ColecaoNumismatica
                 LoadData();
                 BindData();
             }
-            else if (Session["Logado"] != null && Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
+            else if (Session["Logado"] == null && Page.IsPostBack) //Página sem login mas PostBack
             {
+                script = @"
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
+                            document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('btn_login').classList.remove('hidden');   
+                            document.getElementById('searchbar').classList.add('d-flex');
+                            document.getElementById('searchbar').classList.remove('hidden');";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+                LoadData();
+            }
+            else if (Session["Logado"] != null && !Page.IsPostBack) //Página carregada inicialmente com login
+            {
+                ddl_preco.Items.Insert(0, new ListItem("Todos", "0"));
+                ddl_tipo.Items.Insert(0, new ListItem("Todos", "0"));
+
                 isAdmin = Session["Admin"].ToString();
                 user = Session["User"].ToString();
                 Session["LstMoney"] = LstMoney;
@@ -72,9 +85,48 @@ namespace ColecaoNumismatica
                     Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
                 }
                 LoadData();
+                BindData();
             }
-             
+            else if (Session["Logado"] != null && Page.IsPostBack)
+            {
+                isAdmin = Session["Admin"].ToString();
+                user = Session["User"].ToString();
+                Label lblMessage = Master.FindControl("lbl_message") as Label;
+                Session["LstMoney"] = LstMoney;
 
+                if (lblMessage != null)
+                {
+                    lblMessage.Text = "Bem-vindo " + user;
+                }
+
+                script = @"
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
+                            document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('btn_mycollection').classList.remove('hidden');
+                            document.getElementById('btn_alterarpw').classList.remove('hidden');
+                            document.getElementById('searchbar').classList.add('d-flex');
+                            document.getElementById('searchbar').classList.remove('hidden');
+                            document.getElementById('btn_logout').classList.remove('hidden');
+                            document.getElementById('Admin').classList.remove('hidden');";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+
+                if (isAdmin == "Yes")
+                {
+                    script = @"
+                             document.getElementById('btn_insertNewCoin').classList.remove('hidden');
+                             document.getElementById('divider1').classList.remove('hidden');
+                             document.getElementById('divider2').classList.remove('hidden');
+                             document.getElementById('divider3').classList.remove('hidden');
+                             document.getElementById('btn_manageCoins').classList.remove('hidden');
+                             document.getElementById('btn_manageUsers').classList.remove('hidden');
+                             document.getElementById('btn_statistics').classList.remove('hidden');
+                             document.getElementById('btn_registerNewUser').classList.remove('hidden');";
+
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowAdminButtons", script, true);
+                }
+                LoadData();
+            }
         }
 
         public int PageNumberCount
@@ -95,49 +147,50 @@ namespace ColecaoNumismatica
             {
                 Response.Redirect("NumiLoginUser.aspx");
             }
-            else {
-            SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
-            SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
-            myCommand.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
-
-            SqlParameter CodCollection = new SqlParameter();
-            CodCollection.ParameterName = "@CodCollection";
-            CodCollection.Direction = ParameterDirection.Output;
-            CodCollection.SqlDbType = SqlDbType.Int;
-
-            myCommand.Parameters.Add(CodCollection);
-
-            SqlParameter UserHasCollection = new SqlParameter();
-            UserHasCollection.ParameterName = "@UserHasCollection";
-            UserHasCollection.Direction = ParameterDirection.Output;
-            UserHasCollection.SqlDbType = SqlDbType.Int;
-
-            myCommand.Parameters.Add(UserHasCollection);
-
-            myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-            myCommand.CommandText = "NumiCollectionExists"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
-
-            myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
-            myCon.Open(); //Abrir a conexão
-            myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
-            myCon.Close();
-
-            int AnswCodCollection = Convert.ToInt32(myCommand.Parameters["@CodCollection"].Value);
-            int AnswUserHasCollection = Convert.ToInt32(myCommand.Parameters["@UserHasCollection"].Value);
-
-            Session["AnswCodCollection"] = AnswCodCollection;
-            Session["AnswUserHasCollection"] = AnswUserHasCollection;
-
-            btn_add.Visible = true;
-
-            if (e.CommandName.Equals("like"))
+            else
             {
-                string modalScript = @"$('#exampleModal').modal('show');";
+                SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
+                SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
+                myCommand.Parameters.AddWithValue("@CodUtilizador", Session["CodUtilizador"]);
 
-                //Register script to show the modal
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "exampleModalScript", modalScript, true);
-                Session["ModalCommand"] = e.CommandName;
-                Session["ItemID"] = Convert.ToInt32(e.CommandArgument);
+                SqlParameter CodCollection = new SqlParameter();
+                CodCollection.ParameterName = "@CodCollection";
+                CodCollection.Direction = ParameterDirection.Output;
+                CodCollection.SqlDbType = SqlDbType.Int;
+
+                myCommand.Parameters.Add(CodCollection);
+
+                SqlParameter UserHasCollection = new SqlParameter();
+                UserHasCollection.ParameterName = "@UserHasCollection";
+                UserHasCollection.Direction = ParameterDirection.Output;
+                UserHasCollection.SqlDbType = SqlDbType.Int;
+
+                myCommand.Parameters.Add(UserHasCollection);
+
+                myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
+                myCommand.CommandText = "NumiCollectionExists"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+
+                myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
+                myCon.Open(); //Abrir a conexão
+                myCommand.ExecuteNonQuery(); //Executar o Comando Non Query dado que não devolve resultados - Não efetua query à BD - Apenas insere dados
+                myCon.Close();
+
+                int AnswCodCollection = Convert.ToInt32(myCommand.Parameters["@CodCollection"].Value);
+                int AnswUserHasCollection = Convert.ToInt32(myCommand.Parameters["@UserHasCollection"].Value);
+
+                Session["AnswCodCollection"] = AnswCodCollection;
+                Session["AnswUserHasCollection"] = AnswUserHasCollection;
+
+                btn_add.Visible = true;
+
+                if (e.CommandName.Equals("like"))
+                {
+                    string modalScript = @"$('#exampleModal').modal('show');";
+
+                    //Register script to show the modal
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "exampleModalScript", modalScript, true);
+                    Session["ModalCommand"] = e.CommandName;
+                    Session["ItemID"] = Convert.ToInt32(e.CommandArgument);
                 }
             }
         }
@@ -145,7 +198,7 @@ namespace ColecaoNumismatica
         {
             int itemID = Convert.ToInt32(Session["ItemID"]);
             List<object> List = RetrieveValorAtual(itemID);
-            
+
             if (Session["ModalCommand"] != null && Session["ModalCommand"].ToString() == "like" && Session["Logado"].ToString() == "Yes")
             {
                 if (tb_quantidade.Text.Length == 0 || Convert.ToInt32(tb_quantidade.Text) < 1)
@@ -224,60 +277,130 @@ namespace ColecaoNumismatica
         {
             string query;
             List<Money> LstMoney = new List<Money>();
-            if (!Page.IsPostBack)
+            string searchText = string.Empty;
+
+            if (Master is Numismatic masterPage)
             {
-                ddl_preco.Items.Insert(0, new ListItem("Todos", "0"));
-                ddl_tipo.Items.Insert(0, new ListItem("Todos", "0"));
+                TextBox textBox = masterPage.FindControl("tb_search") as TextBox;
+                searchText = textBox.Text;
+            }
+
+            if (Page.IsPostBack)
+            {
+                if (ddl_tipo.SelectedIndex == 0 && ddl_preco.SelectedIndex == 0)
+                {
+                    if (string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado,NCSMN.ValorAtual,NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCS.Estado, NCS.CodEstado, NCSMN.ValorAtual;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                    else if (!string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo,NCS.CodEstado, NCM.ValorCunho,NCS.Estado,NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.Titulo LIKE '%{searchText}%' GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem,NCS.CodEstado, NCM.CodTipoMN,NCSMN.ValorAtual,NCS.Estado";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                }
+                else if (ddl_tipo.SelectedIndex == 0 && ddl_preco.SelectedIndex == 1)
+                {
+                    if (string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCSMN.ValorAtual, NCS.Estado, NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual, NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual ASC;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                    else if (!string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCSMN.ValorAtual, NCS.Estado, NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.Titulo LIKE '%{searchText}%' GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual, NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual ASC;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                }
+                else if (ddl_tipo.SelectedIndex == 0 && ddl_preco.SelectedIndex == 2)
+                {
+                    if (string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado, NCS.CodEstado, NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual DESC;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                    else if (!string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado, NCS.CodEstado, NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.Titulo LIKE '%{searchText}%' GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual DESC;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                }
+                else if (ddl_tipo.SelectedIndex != 0 && ddl_preco.SelectedIndex == 0)
+                {
+                    if (string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado,NCSMN.ValorAtual,NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado ,NCS.Estado;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                    else if (!string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado,NCSMN.ValorAtual,NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} AND NCM.Titulo LIKE '%{searchText}%' GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado ,NCS.Estado;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                }
+                else if (ddl_tipo.SelectedIndex != 0 && ddl_preco.SelectedIndex == 1)
+                {
+                    if (string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado, NCS.CodEstado, NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual ASC;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                    else if (!string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado, NCS.CodEstado, NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} AND NCM.Titulo LIKE '%{searchText}%' GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual ASC;";
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+
+                    }
+                }
+                else if (ddl_tipo.SelectedIndex != 0 && ddl_preco.SelectedIndex == 2)
+                {
+                    if (string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado,NCS.CodEstado,NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual DESC;";
+
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                    else if (!string.IsNullOrEmpty(searchText) == true)
+                    {
+                        query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado,NCS.CodEstado,NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} AND NCM.Titulo LIKE '%{searchText}%' GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual DESC;";
+
+                        LstMoney = Classes.MyFunctions.Listar(query);
+                        Session["LstMoney"] = LstMoney;
+                        BindData();
+                    }
+                }
+            }
+            else
+            {
                 query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado, NCSMN.ValorAtual, NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCS.Estado,NCS.CodEstado, NCSMN.ValorAtual;";
                 LstMoney = Classes.MyFunctions.Listar(query);
                 Session["LstMoney"] = LstMoney;
                 BindData();
             }
-            else if (ddl_preco.SelectedIndex == 0 && ddl_tipo.SelectedIndex == 0)
-            {
-                query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado,NCSMN.ValorAtual,NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCS.Estado, NCS.CodEstado, NCSMN.ValorAtual;";
-                LstMoney = Classes.MyFunctions.Listar(query);
-                Session["LstMoney"] = LstMoney;
-                BindData();
-            }
-            else if (ddl_preco.SelectedIndex == 1 && ddl_tipo.SelectedIndex == 0)
-            {
-                query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCSMN.ValorAtual, NCS.Estado, NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual, NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual ASC;";
-                LstMoney = Classes.MyFunctions.Listar(query);
-                Session["LstMoney"] = LstMoney;
-                BindData();
-            }
-            else if (ddl_preco.SelectedIndex == 2 && ddl_tipo.SelectedIndex == 0)
-            {
-                query = "SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado, NCS.CodEstado, NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual DESC;";
-                LstMoney = Classes.MyFunctions.Listar(query);
-                Session["LstMoney"] = LstMoney;
-                BindData();
-            }
-            else if (ddl_preco.SelectedIndex == 0 && ddl_tipo.SelectedIndex != 0)
-            {
-                query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado,NCSMN.ValorAtual,NCS.CodEstado, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado ,NCS.Estado;";
-                LstMoney = Classes.MyFunctions.Listar(query);
-                Session["LstMoney"] = LstMoney;
-                BindData();
-            }
-            else if (ddl_preco.SelectedIndex == 1 && ddl_tipo.SelectedIndex != 0)
-            {
-                query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado, NCS.CodEstado, NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual ASC;";
 
-                LstMoney = Classes.MyFunctions.Listar(query);
-                Session["LstMoney"] = LstMoney;
-                BindData();
-
-            }
-            else if (ddl_preco.SelectedIndex == 2 && ddl_tipo.SelectedIndex != 0)
-            {
-                query = $"SELECT NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCS.Estado,NCS.CodEstado,NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.CodTipoMN = {ddl_tipo.SelectedValue} GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem, NCM.CodTipoMN, NCSMN.ValorAtual,NCS.CodEstado, NCS.Estado ORDER BY NCSMN.ValorAtual DESC;";
-
-                LstMoney = Classes.MyFunctions.Listar(query);
-                Session["LstMoney"] = LstMoney;
-                BindData();
-            }
         }
         protected void lbtn_previous_Click(object sender, EventArgs e)
         {
@@ -289,23 +412,7 @@ namespace ColecaoNumismatica
             PageNumberCount += 1;
             BindData();
         }
-        protected void Master_BtnSearchInMasterPage(object sender, EventArgs e)
-        {
-            List<Money> LstMoney;
-            if (Master is Numismatic masterPage)
-            {
-                TextBox textBox = masterPage.FindControl("tb_search") as TextBox;
-                if (textBox != null)
-                {
-                    string query = $"SELECT NCM.CodMN, NCM.Titulo,NCS.CodEstado, NCM.ValorCunho,NCS.Estado,NCSMN.ValorAtual, NCI.Imagem, NCM.CodTipoMN FROM NumiCoinMoney AS NCM LEFT JOIN NumiCoinStateMN AS NCSMN ON NCM.CodMN = NCSMN.CodMN LEFT JOIN NumiCoinState AS NCS ON NCSMN.CodEstado = NCS.CodEstado OUTER APPLY ( SELECT TOP 1 NCI2.Imagem FROM NumiCoinMNImage AS NCI2 WHERE NCM.CodMN = NCI2.CodMN ORDER BY NCI2.CodImagem) AS NCI WHERE NCM.Titulo LIKE '%{textBox.Text}%' GROUP BY NCM.CodMN, NCM.Titulo, NCM.ValorCunho, NCI.Imagem,NCS.CodEstado, NCM.CodTipoMN,NCSMN.ValorAtual,NCS.Estado";
-                    LstMoney = Classes.MyFunctions.Listar(query);
-                    Session["LstMoney"] = LstMoney;
-                    Session["Pesquisa"] = "Yes";
-                    BindData();
-                }
-            }
-  
-        }
+
         protected List<object> RetrieveValorAtual(int itemID)
         {
             List<object> ListO = new List<object>();

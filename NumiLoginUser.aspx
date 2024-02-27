@@ -39,16 +39,11 @@
           <div class="form-outline mb-3">
               <label class="form-label" for="tb_pw">Password</label>&nbsp; 
               <asp:RequiredFieldValidator ID="rfv_password" runat="server" ErrorMessage="Password Obrigatória" ControlToValidate="tb_pw" Text="*" ForeColor="Red" ValidationGroup="MainGroup"></asp:RequiredFieldValidator>
-              <asp:TextBox ID="tb_pw" runat="server" class="form-control form-control-lg" placeholder="Introduza a password" ></asp:TextBox>
+              <asp:TextBox ID="tb_pw" runat="server" class="form-control form-control-lg" placeholder="Introduza a password" TextMode="Password" ></asp:TextBox>
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
-            <!-- Checkbox -->
-            <div class="form-check mb-0">
-              <input class="form-check-input me-2" type="checkbox" value="" id="chkBoxRemember" runat="server" /> <!--  -->
-              <label class="form-check-label" for="chkBoxRemember">Lembrar-me</label>
-            </div>
-            
+           
             <a href="#" data-target="#pwdModal" data-toggle="modal">Recuperar password</a>
           </div>
             

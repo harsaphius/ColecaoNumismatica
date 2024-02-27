@@ -1,7 +1,5 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Numismatic.master.cs" Inherits="ColecaoNumismatica.Numismatic"%>
-
 <!DOCTYPE html>
-
 <html>
 <head runat="server">
     <title></title> <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,7 +13,8 @@
     </asp:ContentPlaceHolder>
 </head>
 <body>
-    <form id="form1" runat="server">
+<form id="form1" runat="server">
+<div class="container-fluid">
       <nav class="navbar navbar-expand-sm navbar-light bg-primary"> 
           <a class="navbar-brand text-white" href="NumiMainPage.aspx">NumiCoin</a>
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,23 +43,21 @@
                      </li>   
                 </ul>
                <!-- Message -->
-                   <div class="navbar-text text-white">
+                   <div class="navbar-text text-white text-center">
                           <asp:Label ID="lbl_message" runat="server" Text=""></asp:Label>
                    </div>
                <!-- Message -->
-               <!--Search Bar -->
-       
+               <!--Search Bar -->       
                 <div id="searchbar" class="form-inline my-2 my-lg-0 hidden">
                   <asp:TextBox ID="tb_search" class="form-control mr-sm-2" runat="server"  placeholder="Pesquisa"></asp:TextBox> &nbsp;
                   <asp:Button ID="btn_search" runat="server" class="btn btn-light btn-sm my-2 my-sm-0" Text="Pesquisar" OnClick="btn_search_Click"/>
-                </div>
-            
+                </div>            
                <!--Search Bar -->
             </div>        
    </nav>
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
-    <div style="align-content:flex-end;">   
+    <div id="tawk_chat_widget" class="d-flex justify-content-end">   
     <!--Start of Tawk.to Script-->
         <script type="text/javascript">
             var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
@@ -83,7 +80,7 @@
    <!-- Copyright -->
 
    <!-- Admin -->
-        <div id="Admin" class="text-white mb-3 mb-md-0 align-content-center hidden">
+       <div id="Admin" class="text-white mb-3 mb-md-0 align-content-center hidden">
             <p>Queres contribuir para a nossa página? <asp:LinkButton ID="novoAdmin" class="text-white" runat="server" OnClick="novoAdmin_Click"> Clica aqui! </asp:LinkButton></p>
        </div>
     <!-- Admin -->
@@ -97,7 +94,8 @@
        </div>
    <!-- Right -->
    </div>
+</div>
+</form>
 
-    </form>
 </body>
 </html>

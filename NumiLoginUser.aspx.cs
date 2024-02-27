@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web;
 using System.Web.Security;
-//using ASPSnippets.FaceBookAPI;
 
 namespace ColecaoNumismatica
 {
@@ -14,14 +13,25 @@ namespace ColecaoNumismatica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            //Google Data
             GoogleConnect.ClientId = ConfigurationManager.AppSettings["clientid"];
             GoogleConnect.ClientSecret = ConfigurationManager.AppSettings["clientsecret"];
             GoogleConnect.RedirectUri = ConfigurationManager.AppSettings["redirection_url"];
 
+            //Facebook Data
             FaceBookConnect.API_Key = ConfigurationManager.AppSettings["FacebookKey"];
             FaceBookConnect.API_Secret = ConfigurationManager.AppSettings["FacebookSecret"];
             FaceBookConnect.Version = ConfigurationManager.AppSettings["FacebookVersion"];
 
+            if(Session["Logado"] == null)
+            {
+                string script = @"                      
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
+                            document.getElementById('btn_home').classList.remove('hidden');"                           ;
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
+            }
+          
             if (Request.QueryString["redirected"] != null && Request.QueryString["redirected"] == "true")
             {
                 lbl_ActivatedUser.Text = Session["ActivatedUser"].ToString();
@@ -167,31 +177,7 @@ namespace ColecaoNumismatica
 
             if (AnswUserExist == 1 && AnswAccountActive == 1)
             {
-                if (chkBoxRemember.Checked == true)
-                {
-                    // Create a new authentication ticket
-                    FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
-                        1,                              // version
-                        tb_user.Text,                   // username
-                        DateTime.Now,                   // issue time
-                        DateTime.Now.AddMinutes(60),    // expiration time
-                        false,                          // persistent
-                        "user"                          // user data (optional)
-                    );
-
-                    // Encrypt the ticket
-                    string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-
-                    // Create a new cookie and set its value to the encrypted ticket
-                    HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-
-                    // Set cookie expiration
-                    authCookie.Expires = authTicket.Expiration;
-
-                    // Add the cookie to the response
-                    Response.Cookies.Add(authCookie);
-                }
-
+               
                 if (AnswNumiAdmin == 1) Session["Admin"] = "Yes";
                 else Session["Admin"] = "No";
 

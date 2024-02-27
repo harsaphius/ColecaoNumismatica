@@ -49,7 +49,6 @@ namespace ColecaoNumismatica
                              document.getElementById('divider2').classList.remove('hidden');
                              document.getElementById('divider3').classList.remove('hidden');
                              document.getElementById('btn_manageCoins').classList.remove('hidden');
-                             document.getElementById('btn_manageUsers').classList.remove('hidden');
                              document.getElementById('btn_statistics').classList.remove('hidden');
                              document.getElementById('btn_registerNewUser').classList.remove('hidden');";
 

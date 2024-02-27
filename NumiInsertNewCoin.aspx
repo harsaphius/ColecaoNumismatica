@@ -43,6 +43,7 @@
      <div class="form-group col-md-3">
           <label for="tb_valorCunho">Valor Atual</label>
           <asp:TextBox ID="tb_valorAtual" runat="server" class="form-control" TextMode="SingleLine"></asp:TextBox>
+          <asp:RegularExpressionValidator ID="rev_tbvalorAtual" runat="server" ErrorMessage="Please enter a valid decimal number" Text="*" ControlToValidate="tb_valorAtual" ForeColor="Blue" ValidationExpression="^(?=.[A-Za-z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%*?&]{9,20}$"></asp:RegularExpressionValidator>
           <asp:RequiredFieldValidator ID="rfv_tbvalorAtual" runat="server" ErrorMessage="Valor Atual Obrigatório" ControlToValidate="tb_valorAtual" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
     </div>
    

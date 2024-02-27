@@ -105,6 +105,15 @@ namespace ColecaoNumismatica
         protected global::System.Web.UI.WebControls.TextBox tb_valorAtual;
 
         /// <summary>
+        /// rev_tbvalorAtual control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rev_tbvalorAtual;
+
+        /// <summary>
         /// rfv_tbvalorAtual control.
         /// </summary>
         /// <remarks>

@@ -3,10 +3,10 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div style="display:flex;justify-content:center;padding:5px;"> <asp:Label ID="lbl_message" runat="server" Text=""></asp:Label></div>
-    <div style="display:flex;justify-content:center;padding:20px;">
+    <div class="table-responsive w-auto">
     <asp:Repeater ID="rpt_manageUsers" runat="server" DataSourceID="SQLDSUsers" OnItemDataBound="rpt_manageUsers_ItemDataBound" OnItemCommand="rpt_manageUsers_ItemCommand">
                 <HeaderTemplate>
-                <table class="responsive-table" border="0" style="border-collapse:collapse; text-align:center;">
+                <table class="table" border="0" style="border-collapse:collapse; text-align:center;">
                     <tr style="background-color:dodgerblue;">
                          <td><b>Código de Utilizador</b></td>
                          <td><b>Utilizador</b></td>
