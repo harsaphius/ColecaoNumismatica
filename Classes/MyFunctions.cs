@@ -179,7 +179,7 @@ namespace ColecaoNumismatica.Classes
                 record.valorAtual = Convert.ToDecimal(dr["ValorAtual"]);
                 record.imagem = "data:image/jpeg;base64," + Convert.ToBase64String((byte[])dr["Imagem"]);
                 record.imagemC = Convert.ToBase64String((byte[])dr["Imagem"]);
- 
+
                 LstMoney.Add(record);
             }
 

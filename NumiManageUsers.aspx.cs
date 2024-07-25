@@ -15,6 +15,7 @@ namespace ColecaoNumismatica
 
             if (Session["Logado"] == null)
             {
+                Session["Logado"] = null;
                 Response.Redirect("NumiMainPage.aspx");
             }
             else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
@@ -34,8 +35,6 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
-                            document.getElementById('searchbar').classList.add('d-flex');
-                            document.getElementById('searchbar').classList.remove('hidden');
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 

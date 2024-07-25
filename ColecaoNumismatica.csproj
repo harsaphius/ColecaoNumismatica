@@ -109,6 +109,7 @@
     <Content Include="NumiStatistics.aspx" />
     <Content Include="NumiRegisterUser.aspx" />
     <Content Include="style.css" />
+    <Content Include="TesteCalendario.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +222,13 @@
     </Compile>
     <Compile Include="NumiRegisterUser.aspx.designer.cs">
       <DependentUpon>NumiRegisterUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="TesteCalendario.aspx.cs">
+      <DependentUpon>TesteCalendario.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TesteCalendario.aspx.designer.cs">
+      <DependentUpon>TesteCalendario.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

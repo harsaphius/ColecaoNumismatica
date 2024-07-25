@@ -14,6 +14,7 @@ namespace ColecaoNumismatica
         {
             string isAdmin, user, script;
             List<Money> LstMoney = new List<Money>();
+            Session["MainPage"] = "Yes";
 
             if (Session["Logado"] == null && !Page.IsPostBack) //Página carregada inicialmente sem login
             {
@@ -128,7 +129,6 @@ namespace ColecaoNumismatica
                 LoadData();
             }
         }
-
         public int PageNumberCount
         {
             get
@@ -412,7 +412,6 @@ namespace ColecaoNumismatica
             PageNumberCount += 1;
             BindData();
         }
-
         protected List<object> RetrieveValorAtual(int itemID)
         {
             List<object> ListO = new List<object>();

@@ -38,7 +38,7 @@ namespace ColecaoNumismatica
                 }
 
                 script = @"
-                             document.getElementById('navBarDropDown').classList.remove('hidden');
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');

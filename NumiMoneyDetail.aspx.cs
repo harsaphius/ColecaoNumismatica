@@ -13,9 +13,18 @@ namespace ColecaoNumismatica
         {
             string script;
 
-            if (Session["Logado"] == null)
+            if(Session["MainPage"] == null)
             {
                 Response.Redirect("NumiMainPage.aspx");
+            }
+            if (Session["Logado"] == null)
+            {
+                script = @"                      
+                            document.getElementById('navBarDropDown').classList.remove('hidden');
+                            document.getElementById('btn_home').classList.remove('hidden');
+                            document.getElementById('btn_login').classList.remove('hidden');";
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ShowPageElements", script, true);
             }
             else if (Session["Logado"].ToString() == "Yes" || Page.IsPostBack == true)
             {

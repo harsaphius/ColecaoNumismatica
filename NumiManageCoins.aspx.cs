@@ -40,8 +40,6 @@ namespace ColecaoNumismatica
                             document.getElementById('btn_home').classList.remove('hidden');
                             document.getElementById('btn_mycollection').classList.remove('hidden');
                             document.getElementById('btn_alterarpw').classList.remove('hidden');
-                            document.getElementById('searchbar').classList.add('d-flex');
-                            document.getElementById('searchbar').classList.remove('hidden');
                             document.getElementById('btn_logout').classList.remove('hidden');
                             document.getElementById('Admin').classList.remove('hidden');";
 
@@ -243,8 +241,6 @@ namespace ColecaoNumismatica
             {
                 string codImageToDelete = e.CommandArgument.ToString();
 
-                // Your logic to delete the image associated with codImageToDelete
-                // For example, you might have a method to delete the image from the server
                 string query = "DELETE FROM NumiCoinMNImage WHERE ";
 
                 SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString);
@@ -257,8 +253,7 @@ namespace ColecaoNumismatica
                 myCommand.ExecuteNonQuery();
                 myConn.Close();
 
-                // Rebind the repeater to reflect the changes
-                rpt_manageCoins.DataBind(); // Assuming you have a method to bind data to the repeater
+                rpt_manageCoins.DataBind();
             }
         }
 
@@ -269,7 +264,6 @@ namespace ColecaoNumismatica
         /// <returns></returns>
         public static int NumiCoinUpdateCoin(List<string> values)
         {
-
             SqlConnection myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NumiCoinConnectionString"].ConnectionString); //Definir a conexão à base de dados
 
             SqlCommand myCommand = new SqlCommand(); //Novo commando SQL 
@@ -320,7 +314,7 @@ namespace ColecaoNumismatica
             myCommand.Parameters.AddWithValue("@CodMN", code);
 
             myCommand.CommandType = CommandType.StoredProcedure; //Diz que o command type é uma SP
-            myCommand.CommandText = "NumiRemoveCoin"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
+            myCommand.CommandText = "NumiRemoveCoinR"; //Comando SQL Insert para inserir os dados acima na respetiva tabela
 
             myCommand.Connection = myCon; //Definição de que a conexão do meu comando é a minha conexão definida anteriormente
             myCon.Open(); //Abrir a conexão

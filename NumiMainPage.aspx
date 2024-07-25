@@ -5,11 +5,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="messageAR" class="hidden"><asp:Label ID="lbl_message" runat="server" Text=""></asp:Label></div>
 <div class="container">
-<div class="row">
-    <div class="col-lg">
 
-    </div>
-</div>
 <div class="row">
     <div class="col-lg">
         <div class="selectpicker" style="display:flex;justify-content:center;padding:10px">
